@@ -18,7 +18,7 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 
-import com.example.meiyou.data.GlobalData;
+import com.example.meiyou.utils.GlobalData;
 import com.example.meiyou.databinding.ActivityLoginBinding;
 import com.example.meiyou.model.User;
 
@@ -85,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private Boolean login(String username, String passwd){
         loadingProgressBar.setVisibility(View.VISIBLE);
-        GlobalData.getUser().networkLogin(username, passwd);
+        GlobalData.getUser().login(username, passwd);
         return true;
     }
 

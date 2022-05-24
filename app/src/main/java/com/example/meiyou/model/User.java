@@ -6,7 +6,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.meiyou.data.NetworkConstant;
+import com.example.meiyou.utils.NetworkBasic;
+import com.example.meiyou.utils.NetworkConstant;
 
 import org.json.JSONObject;
 
@@ -19,70 +20,70 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class User {
-    public String username, signature;
-    private String token;
-    public enum Status{
-        idle,
-        success,
-        fail,
-        wrong,
-    }
-    public MutableLiveData<Status> status = new MutableLiveData<Status>(Status.idle);
+/* Hold User data and handle some user related http request*/
+public class User extends NetworkBasic {
+    public String username = "", signature = "";
+    public String email = "";
+    private String token = "";
 
     public String getToken(){
         return  token;
     }
 
-    public void networkLogin(String username, String password){
-        status.setValue(Status.idle);
+    public static final int
+            ERROR_VALIDATION_CODE    = 11,
+            ERROR_USERNAME_EXIST     = 2,
+            ERROR_EMAIL_EXIST        = 3,
+            ERROR_TELEPHONE_EXIST    = 4,
+            ERROR_USERNAME_FORMAT    = 10;
+
+
+    public void login(String username, String password){
+        status.postValue(Status.idle);
         this.username = username;
         password = getMD5(password);
         RequestBody body = new FormBody.Builder()
                 .add("username", username)
                 .add("passwd", password)
                 .build();
-        NetworkConstant.post(NetworkConstant.loginUrl, body, false, new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) { status.postValue(Status.fail); }
-
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                try {
+        NetworkConstant.post(NetworkConstant.loginUrl, body, false, getCommonNetworkCallback(
+                response -> {
                     if(response.code()!=200){
                         status.postValue(Status.wrong);
-                        Log.d("gg", "onResponse: "+response.body().string());
                         return;
                     }
                     JSONObject jsonObject = new JSONObject(response.body().string());
                     token = jsonObject.getString("token");
                     status.postValue(Status.success);
-
-                    NetworkConstant.get(NetworkConstant.userInfoUrl, true, new Callback() {
-                        @Override
-                        public void onFailure(@NonNull Call call, @NonNull IOException e) { status.setValue(Status.fail); }
-
-                        @Override
-                        public void onResponse(@NonNull Call call, @NonNull Response response1) throws IOException {
-                            try {
-                                JSONObject jsonObject1 = new JSONObject(response1.body().string());
-                                signature = jsonObject1.getString("sig");
-                            }catch (Exception e) {
-                                status.postValue(Status.fail);
-                            }
-                        }
-                    });
-                }catch (Exception e) {
-                    status.postValue(Status.fail);
                 }
-            }
-        });
+        ));
     }
 
+    public void register(String username, String password, String email, int code){
+        status.postValue(User.Status.idle);
+        RequestBody body = new FormBody.Builder()
+                .add("username", username)
+                .add("passwd", getMD5(password))
+                .add("valid_type", "mail")
+                .add("valid_content", email)
+                .add("code", String.valueOf(code))
+                .build();
+        NetworkConstant.post(NetworkConstant.registerUrl, body, false, getCommonNetworkCallback(
+                response -> {
+                    JSONObject jsonObject = new JSONObject(response.body().string());
+                    if (response.code() != 200) {
+                        status.postValue(Status.wrong);
+                        errorCode = jsonObject.getInt("id");
+                        Log.d("Net", "onResponse: " + jsonObject.getString("message"));
+                        return;
+                    }
+                    User.this.username = username;
+                    status.postValue(Status.success);
+                }
+        ));
+    }
 
-
-
-    private String getMD5(String info) {
+    public static String getMD5(String info) {
         try {
             MessageDigest md5 = MessageDigest.getInstance("MD5");
             md5.update(info.getBytes("UTF-8"));
@@ -99,7 +100,5 @@ public class User {
             return "";
         }
     }
-
-
 
 }
