@@ -66,6 +66,14 @@ public class LoginActivity extends AppCompatActivity {
                         passwordEditText.getText().toString());
             }
         });
+
+        binding.buttonToRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                activityResultLauncher.launch(intent);
+            }
+        });
         Log.d("FUCK", "onCreate: " + GlobalData.getUser());
         GlobalData.getUser().status.observe(this, new Observer<User.Status>() {
             @Override

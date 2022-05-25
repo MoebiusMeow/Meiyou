@@ -70,11 +70,12 @@ public class User extends NetworkBasic {
                 .build();
         NetworkConstant.post(NetworkConstant.registerUrl, body, false, getCommonNetworkCallback(
                 response -> {
+                    Log.d("NETDCT", "register: in");
                     JSONObject jsonObject = new JSONObject(response.body().string());
                     if (response.code() != 200) {
                         status.postValue(Status.wrong);
                         errorCode = jsonObject.getInt("id");
-                        Log.d("Net", "onResponse: " + jsonObject.getString("message"));
+                        Log.d("NETDCT", "onResponse: " + jsonObject.getString("message"));
                         return;
                     }
                     User.this.username = username;
