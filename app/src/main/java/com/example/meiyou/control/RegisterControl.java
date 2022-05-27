@@ -16,10 +16,8 @@ public class RegisterControl extends NetworkBasic {
     public MutableLiveData<Integer> timeCountDown = new MutableLiveData<Integer>(0);
     public void requireCode(String email){
         status.postValue(Status.idle);
-        Log.d("TESTDCY", "requireCode: in");
         if(timeCountDown.getValue() > 0)
             return;
-        Log.d("TESTDCY", "requireCode: inin");
         HttpUrl url = HttpUrl.parse(NetworkConstant.validationUrl).newBuilder()
                 .addQueryParameter("mail", email)
                 .build();

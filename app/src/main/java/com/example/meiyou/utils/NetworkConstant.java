@@ -15,6 +15,9 @@ public class NetworkConstant extends Activity {
     public static final String userInfoUrl = serverUrl + "/userinfo";
     public static final String registerUrl = serverUrl + "/register";
     public static final String validationUrl = serverUrl + "/valid";
+    public static final String getSinglePost = serverUrl + "/postdetail";
+    public static final String getMultiplePost = serverUrl + "/getpost";
+    public static final String sendPost = serverUrl + "/post";
 
     /* Method to build http Call */
     public static final OkHttpClient client = new OkHttpClient();

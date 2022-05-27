@@ -3,18 +3,18 @@ package com.example.meiyou.utils;
 import android.content.res.ColorStateList;
 
 import com.example.meiyou.control.RegisterControl;
-import com.example.meiyou.model.User;
+import com.example.meiyou.model.MainUser;
 
 public class GlobalData {
-    private User user;
+    private MainUser mainUser;
     private RegisterControl registerControl;
     private static GlobalData instant = null;
     private GlobalData(){
         registerControl = new RegisterControl();
-        user = new User();
+        mainUser = new MainUser();
     }
-    public static User getUser(){
-        return getInstant().user;
+    public static MainUser getUser(){
+        return getInstant().mainUser;
     }
     public static RegisterControl getRegisterControl(){return getInstant().registerControl;}
     public static GlobalData getInstant(){

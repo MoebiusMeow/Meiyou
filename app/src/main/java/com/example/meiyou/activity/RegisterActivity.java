@@ -6,9 +6,6 @@ import androidx.lifecycle.Observer;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,7 +13,7 @@ import android.widget.Toast;
 
 import com.example.meiyou.R;
 import com.example.meiyou.databinding.ActivityRegisterBinding;
-import com.example.meiyou.model.User;
+import com.example.meiyou.model.MainUser;
 import com.example.meiyou.utils.GlobalData;
 import com.example.meiyou.utils.NetworkBasic;
 
@@ -60,15 +57,15 @@ public class RegisterActivity extends AppCompatActivity {
                     binding.progressBar.setVisibility(View.INVISIBLE);
                     Toast.makeText(RegisterActivity.this, "注册失败，请按提示信息修改", Toast.LENGTH_SHORT).show();
                     int errorCode = GlobalData.getUser().errorCode;
-                    if(errorCode == User.ERROR_VALIDATION_CODE){
+                    if(errorCode == com.example.meiyou.model.MainUser.ERROR_VALIDATION_CODE){
                         binding.notifyCode.setText("验证码错误");
                         binding.notifyCode.setVisibility(View.VISIBLE);
                     }
-                    if(errorCode == User.ERROR_EMAIL_EXIST){
+                    if(errorCode == com.example.meiyou.model.MainUser.ERROR_EMAIL_EXIST){
                         binding.notifyEmail.setText("邮箱已被注册");
                         binding.notifyEmail.setVisibility(View.VISIBLE);
                     }
-                    if(errorCode == User.ERROR_USERNAME_EXIST){
+                    if(errorCode == MainUser.ERROR_USERNAME_EXIST){
                         binding.notifyUsername.setText("用户名已被注册");
                         binding.notifyUsername.setVisibility(View.VISIBLE);
                     }

@@ -3,23 +3,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/navigation_viewPost">
 
     <fragment
-        android:id="@+id/navigation_home"
-        android:name="com.example.meiyou.activity.ui.home.HomeFragment"
-        android:label="@string/title_viewPost"
-        tools:layout="@layout/fragment_home" />
+        android:id="@+id/navigation_viewPost"
+        android:name="com.example.meiyou.fragment.PostTabFragment"
+        android:label="@string/title_viewPost" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.example.meiyou.activity.ui.dashboard.DashboardFragment"
-        android:label="@string/title_newPost"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_newPost"
+        android:name="com.example.meiyou.fragment.NewPostFragment"
+        android:label="@string/title_newPost" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.example.meiyou.activity.ui.notifications.NotificationsFragment"
-        android:label="@string/title_message"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_message"
+        android:name="com.example.meiyou.fragment.MessageFragment"
+        android:label="@string/title_message" />
+
+    <fragment
+        android:id="@+id/navigation_mine"
+        android:name="com.example.meiyou.fragment.UserFragment"
+        android:label="@string/title_mine" />
+
 </navigation>

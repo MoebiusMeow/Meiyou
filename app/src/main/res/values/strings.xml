@@ -14,4 +14,7 @@
     <string name="title_newPost">发帖</string>
     <string name="title_message">消息</string>
     <string name="title_mine">我的</string>
+    <string name="title_newest">最新</string>
+    <string name="title_hot">热度</string>
+    <string name="title_follow">关注</string>
 </resources>

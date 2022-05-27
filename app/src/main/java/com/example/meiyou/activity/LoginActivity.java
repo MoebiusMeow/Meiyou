@@ -18,9 +18,9 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 
+import com.example.meiyou.model.MainUser;
 import com.example.meiyou.utils.GlobalData;
 import com.example.meiyou.databinding.ActivityLoginBinding;
-import com.example.meiyou.model.User;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -75,15 +75,15 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         Log.d("FUCK", "onCreate: " + GlobalData.getUser());
-        GlobalData.getUser().status.observe(this, new Observer<User.Status>() {
+        GlobalData.getUser().status.observe(this, new Observer<MainUser.Status>() {
             @Override
-            public void onChanged(User.Status status) {
-                if(status == User.Status.success){
+            public void onChanged(MainUser.Status status) {
+                if(status == com.example.meiyou.model.MainUser.Status.success){
                     loadingProgressBar.setVisibility(View.INVISIBLE);
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     activityResultLauncher.launch(intent);
                 }
-                else if(status == User.Status.wrong){
+                else if(status == MainUser.Status.wrong){
                     Toast.makeText(LoginActivity.this, "用户名或密码错误", Toast.LENGTH_SHORT).show();
                     loadingProgressBar.setVisibility(View.INVISIBLE);
                 }

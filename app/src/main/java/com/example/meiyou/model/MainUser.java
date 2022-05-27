@@ -3,25 +3,18 @@ package com.example.meiyou.model;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.MutableLiveData;
-
 import com.example.meiyou.utils.NetworkBasic;
 import com.example.meiyou.utils.NetworkConstant;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.security.MessageDigest;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 
-/* Hold User data and handle some user related http request*/
-public class User extends NetworkBasic {
+/* Hold MainUser data and handle some user related http request*/
+public class MainUser extends NetworkBasic {
     public String username = "", signature = "";
     public String email = "";
     private String token = "";
@@ -60,7 +53,7 @@ public class User extends NetworkBasic {
     }
 
     public void register(String username, String password, String email, int code){
-        status.postValue(User.Status.idle);
+        status.postValue(com.example.meiyou.model.MainUser.Status.idle);
         RequestBody body = new FormBody.Builder()
                 .add("username", username)
                 .add("passwd", getMD5(password))
@@ -78,7 +71,7 @@ public class User extends NetworkBasic {
                         Log.d("NETDCT", "onResponse: " + jsonObject.getString("message"));
                         return;
                     }
-                    User.this.username = username;
+                    MainUser.this.username = username;
                     status.postValue(Status.success);
                 }
         ));
