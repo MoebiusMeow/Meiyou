@@ -14,9 +14,14 @@
         android:theme="@style/Theme.Meiyou"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activity.RegisterActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.MainActivity"
-            android:exported="false"
-            android:label="@string/title_activity_main" />
+            android:exported="true"
+            android:label="@string/title_activity_main" >
+
+        </activity>
         <activity
             android:name=".activity.LoginActivity"
             android:exported="true"

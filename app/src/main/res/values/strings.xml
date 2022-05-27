@@ -10,7 +10,11 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="title_activity_main">MainActivity</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_viewPost">看帖</string>
+    <string name="title_newPost">发帖</string>
+    <string name="title_message">消息</string>
+    <string name="title_mine">我的</string>
+    <string name="title_newest">最新</string>
+    <string name="title_hot">热度</string>
+    <string name="title_follow">关注</string>
 </resources>
