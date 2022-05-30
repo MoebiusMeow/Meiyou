@@ -14,4 +14,8 @@
     <color name="pink_600">#D86C97</color>
     <color name="pink_700">#CA5986</color>
     <color name="red_0">#DA1C1C</color>
+    <color name="green_0">#EAF8D9</color>
+    <color name="green_200">#C6E3A4</color>
+    <color name="green_400">#809F5B</color>
+    <color name="green_600">#526A36</color>
 </resources>

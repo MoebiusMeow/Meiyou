@@ -21,6 +21,7 @@ import androidx.lifecycle.Observer;
 import com.example.meiyou.model.MainUser;
 import com.example.meiyou.utils.GlobalData;
 import com.example.meiyou.databinding.ActivityLoginBinding;
+import com.example.meiyou.utils.NetworkBasic;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -46,6 +47,9 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = binding.password;
         loginButton = binding.login;
         loadingProgressBar = binding.loading;
+
+        usernameEditText.setText("dcy11011");
+        passwordEditText.setText("dcy1016");
 
         passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -74,17 +78,20 @@ public class LoginActivity extends AppCompatActivity {
                 activityResultLauncher.launch(intent);
             }
         });
-        Log.d("FUCK", "onCreate: " + GlobalData.getUser());
         GlobalData.getUser().status.observe(this, new Observer<MainUser.Status>() {
             @Override
             public void onChanged(MainUser.Status status) {
-                if(status == com.example.meiyou.model.MainUser.Status.success){
+                if(status == NetworkBasic.Status.success){
                     loadingProgressBar.setVisibility(View.INVISIBLE);
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     activityResultLauncher.launch(intent);
                 }
-                else if(status == MainUser.Status.wrong){
+                else if(status == NetworkBasic.Status.wrong){
                     Toast.makeText(LoginActivity.this, "用户名或密码错误", Toast.LENGTH_SHORT).show();
+                    loadingProgressBar.setVisibility(View.INVISIBLE);
+                }
+                else if(status == NetworkBasic.Status.fail){
+                    Toast.makeText(LoginActivity.this, "糟糕，网络好像开小差了", Toast.LENGTH_SHORT).show();
                     loadingProgressBar.setVisibility(View.INVISIBLE);
                 }
             }

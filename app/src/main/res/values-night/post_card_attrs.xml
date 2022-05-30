@@ -3,5 +3,11 @@
     <declare-styleable name="MyPostCard">
         <attr name="CardTitle" format="string" />
         <attr name="CardContent" format="string" />
+        <attr name="CardUsername" format="string" />
+        <attr name="CardUserProfile" format="reference" />
+        <attr name="CardDatetime" format="string" />
+        <attr name="CardPostID" format="integer" />
+        <attr name="CardNZan" format="integer" />
+        <attr name="CardNReply" format="integer" />
     </declare-styleable>
 </resources>

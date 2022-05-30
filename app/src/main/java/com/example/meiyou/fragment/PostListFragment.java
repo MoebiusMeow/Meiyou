@@ -1,5 +1,6 @@
 package com.example.meiyou.fragment;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,9 +17,8 @@ import com.example.meiyou.component.PostViewAdapter;
 import com.example.meiyou.databinding.FragmentPostlistBinding;
 import com.example.meiyou.model.Post;
 import com.example.meiyou.model.PostList;
+import com.example.meiyou.utils.GlobalResFileManager;
 import com.example.meiyou.utils.NetworkBasic;
-
-import java.util.LinkedList;
 
 public class PostListFragment extends Fragment {
     private FragmentPostlistBinding binding;
@@ -43,18 +43,45 @@ public class PostListFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
+        // on Post list get
         postListModel.status.observe(getViewLifecycleOwner(), new Observer<NetworkBasic.Status>() {
             @Override
             public void onChanged(NetworkBasic.Status status) {
                 binding.progressBar2.setVisibility(View.INVISIBLE);
-                if(status == NetworkBasic.Status.fail || status == NetworkBasic.Status.wrong){
+                if(status == NetworkBasic.Status.fail ){
                     Toast.makeText(getActivity(), "糟糕，网络好像不太通畅..", Toast.LENGTH_SHORT).show();
+                }
+                if(status == NetworkBasic.Status.wrong){
+                    Toast.makeText(getActivity(), "发生了一些小错误...", Toast.LENGTH_SHORT).show();
                 }
 
                 if(status == NetworkBasic.Status.success){
                     for(int i = postListModel.new_start; i< postListModel.len(); i++){
                         Post post = postListModel.get(i);
                         mAdapter.addPost(PostViewAdapter.PostInfo.fromPost(post));
+
+                        // Download User Profile
+                        /*if(post.profile_id >=0) {
+                            FileDownloader fileDownloader = new FileDownloader();
+                            fileDownloader.status.observe(getViewLifecycleOwner(), new Observer<NetworkBasic.Status>() {
+                                @Override
+                                public void onChanged(NetworkBasic.Status status) {
+                                    if (status == NetworkBasic.Status.success) {
+                                        post.userProfileUri = fileDownloader.result;
+                                        mAdapter.notifyDataSetChanged();
+                                        Log.d("Image", "onChanged: sccess");
+                                    }
+                                }
+                            });
+                            fileDownloader.get(post.profile_id);
+                        }*/
+                        if(post.profile_id >= 0) {
+                            GlobalResFileManager.requestFile(getViewLifecycleOwner(), post.profile_id, uri -> {
+                                post.userProfileUri = uri;
+                                mAdapter.notifyDataSetChanged();
+                                Log.d("Image", "onChanged: " + uri.toString());
+                            });
+                        }
                     }
                     boolean ifNoMore = (postListModel.len() - postListModel.new_start) != N_POST_GET;
                     mAdapter.changeTail(ifNoMore);

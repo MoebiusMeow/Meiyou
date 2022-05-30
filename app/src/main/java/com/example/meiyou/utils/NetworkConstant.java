@@ -1,11 +1,16 @@
 package com.example.meiyou.utils;
 
 import android.app.Activity;
+import android.text.TextUtils;
+
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Callback;
+import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class NetworkConstant extends Activity {
 
@@ -15,22 +20,46 @@ public class NetworkConstant extends Activity {
     public static final String userInfoUrl = serverUrl + "/userinfo";
     public static final String registerUrl = serverUrl + "/register";
     public static final String validationUrl = serverUrl + "/valid";
-    public static final String getSinglePost = serverUrl + "/postdetail";
-    public static final String getMultiplePost = serverUrl + "/getpost";
-    public static final String sendPost = serverUrl + "/post";
+    public static final String getSinglePostUrl = serverUrl + "/postdetail";
+    public static final String getMultiplePostUrl = serverUrl + "/getpost";
+    public static final String sendPostUrl = serverUrl + "/post";
+    public static final String downloadUrl = serverUrl + "/download";
 
     /* Method to build http Call */
-    public static final OkHttpClient client = new OkHttpClient();
+    public static final OkHttpClient client = new OkHttpClient.Builder()
+            //.callTimeout(3, TimeUnit.SECONDS)
+            //.writeTimeout(2, TimeUnit.SECONDS)
+            //.readTimeout(2, TimeUnit.SECONDS)
+            .build();
+
+    private static ConnectionPool mConnectionPool=new ConnectionPool(1000, 30, TimeUnit.MINUTES);
     public static void post(String url, RequestBody body, Boolean login_required, Callback callback){
-        Request.Builder requestBuilder = new Request.Builder().url(url).post(body);
+        Request.Builder requestBuilder = new Request.Builder().url(url).post(body)
+                .header("Connection", "close");
         if(login_required)
             requestBuilder.header("Authorization", GlobalData.getUser().getToken());
         client.newCall(requestBuilder.build()).enqueue(callback);
     }
     public static void get(String url, Boolean login_required, Callback callback){
-        Request.Builder requestBuilder = new Request.Builder().url(url).get();
+        Request.Builder requestBuilder = new Request.Builder().url(url).get()
+                .header("Connection", "close");
         if(login_required)
             requestBuilder.header("Authorization", GlobalData.getUser().getToken());
         client.newCall(requestBuilder.build()).enqueue(callback);
+    }
+    public static String getHeaderFileName(Response response) {
+        String dispositionHeader = response.header("Content-Disposition");
+        if (!TextUtils.isEmpty(dispositionHeader)) {
+            dispositionHeader.replace("attachment;filename=", "");
+            dispositionHeader.replace("filename*=utf-8", "");
+            String[] strings = dispositionHeader.split("; ");
+            if (strings.length > 1) {
+                dispositionHeader = strings[1].replace("filename=", "");
+                dispositionHeader = dispositionHeader.replace("\"", "");
+                return dispositionHeader;
+            }
+            return "";
+        }
+        return "";
     }
 }

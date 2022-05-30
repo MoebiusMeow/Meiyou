@@ -1,10 +1,12 @@
 package com.example.meiyou.component;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,12 +21,13 @@ import java.util.LinkedList;
 
 
 // Hold Post List
+//
 public class PostViewAdapter extends
         RecyclerView.Adapter<PostViewAdapter.PostViewHolder>{
     private final LinkedList<PostInfo> mPostList = new LinkedList<PostInfo>();
     private final LayoutInflater mInflater;
     public static final int MAX_TITLE_LEN = 20, MAX_CONTENT_LEN = 80;
-    public static final int TYPE_POST_CARD = 0x01, TYPE_TAIL = 0x02;
+    public static final int TYPE_POST_CARD = 0x01, TYPE_TAIL = 0x02, TYPE_NULLTAIL = 0x03;
 
     public interface LoadMoreAction{
         public void Onclick();
@@ -45,56 +48,67 @@ public class PostViewAdapter extends
 
 
     // Hold Post Card data
+    // Data passed to display should be process here
     public static class PostInfo{
-        private String mTitle = "";
-        private String mContent = "";
+        private Post post = new Post();
         private int mtype = TYPE_POST_CARD;
 
         public static PostInfo fromPost(Post post){
-            return new PostInfo(post.title, post.content, TYPE_POST_CARD);
+            return new PostInfo(post);
         }
 
-        public PostInfo(String mTitle, String mContent, int mType ) {
-            this.setTitle(mTitle);
-            this.setContent(mContent);
-            this.setType(mType);
+        public PostInfo(String title, String content, int type){
+            post.title = title;
+            post.content = content;
+            mtype = type;
         }
-        public String getTitle(){ return mTitle; }
-        public String getContent(){ return mContent; }
+
+        public PostInfo(Post post ) {
+            this.post = post;
+        }
+        public String getTitle(){ return post.title; }
+        public String getContent(){ return post.content; }
         public int getType(){return mtype;}
 
         public boolean setTitle(String mTitle){
-            this.mTitle = mTitle.substring(0, Math.min(MAX_TITLE_LEN, mTitle.length()));
+            this.post.title = mTitle.substring(0, Math.min(MAX_TITLE_LEN, mTitle.length()));
             if(mTitle.length()>MAX_TITLE_LEN){
-                this.mTitle = this.mTitle.concat("...");
+                this.post.title = this.post.title.concat("...");
                 return true;
             }
             return false;
         }
 
         public  boolean setContent(String mContent){
-            this.mContent = mContent.substring(0, Math.min(MAX_CONTENT_LEN, mContent.length()));
+            this.post.content = mContent.substring(0, Math.min(MAX_CONTENT_LEN, mContent.length()));
             if(mContent.length()>MAX_CONTENT_LEN){
-                this.mTitle = this.mTitle.concat("...");
+                this.post.content = this.post.content.concat("...");
                 return true;
             }
             return false;
         }
 
         public  boolean setType(int mtype){
-            if(mtype == TYPE_TAIL || mtype == TYPE_POST_CARD) {
+            if(mtype == TYPE_TAIL || mtype == TYPE_POST_CARD || mtype == TYPE_NULLTAIL) {
                 this.mtype = mtype;
                 return false;
             }
             this.mtype = TYPE_POST_CARD;
             return true;
         }
+
+        public String getPostIDString(){
+            return "#"+ post.pid;
+        }
     }
 
+    // interface between component and Post Adapter
     class PostViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
-        public final TextView titleView,contentView,loadMoreView;
+        public final TextView titleView,contentView,loadMoreView, usernameView, datetimeView,
+                pidView, zanView, commentView;
+        public final ImageView userProfileView;
         final PostViewAdapter mAdapter;
         private final int mType;
 
@@ -102,14 +116,24 @@ public class PostViewAdapter extends
 
         public PostViewHolder(View itemView, PostViewAdapter adapter, int _type) {
             super(itemView);
-            TextView contentView1, titleView1, loadMoreView1;
+            TextView contentView1, titleView1, loadMoreView1, usernameView1, datetimeView1,
+                    pidView1, zanView1, commentView1;
+            ImageView userProfileView1 = null;
             mType = _type;
-            titleView1 = contentView1 = loadMoreView1 = null;
+            usernameView1 = titleView1 = contentView1 = loadMoreView1 = null;
+            datetimeView1 = pidView1 = zanView1 = commentView1 = null;
+            userProfileView1 = null;
             if(mType == TYPE_POST_CARD) {
                 titleView1 = itemView.findViewById(R.id.post_card_title);
                 contentView1 = itemView.findViewById(R.id.post_card_content);
+                usernameView1 = itemView.findViewById(R.id.textPostUsername);
+                datetimeView1 = itemView.findViewById(R.id.textDateTime);
+                pidView1 = itemView.findViewById(R.id.textPostID);
+                zanView1 = itemView.findViewById(R.id.textNZan);
+                commentView1 = itemView.findViewById(R.id.textNReply);
+                userProfileView1 = itemView.findViewById(R.id.postUserProfile);
             }
-            else if(mType == TYPE_TAIL){
+            else if(mType == TYPE_TAIL || mType == TYPE_NULLTAIL){
                 loadMoreView1 = itemView.findViewById(R.id.loadMoreText);
             }
             else{
@@ -118,6 +142,12 @@ public class PostViewAdapter extends
             contentView = contentView1;
             titleView = titleView1;
             loadMoreView = loadMoreView1;
+            usernameView = usernameView1;
+            datetimeView = datetimeView1;
+            pidView = pidView1;
+            zanView = zanView1;
+            commentView = commentView1;
+            userProfileView = userProfileView1;
             this.mAdapter = adapter;
             itemView.setOnClickListener(this);
         }
@@ -128,17 +158,6 @@ public class PostViewAdapter extends
         public void onClick(View view) {
             if(mType == TYPE_TAIL){
                 loadMoreAction.Onclick();
-                /*
-                PostInfo mLastHolder = mPostList.getLast();
-                mPostList.removeLast();
-                for(int i=0; i<10 && mPostList.size()<20; i++)
-                    mPostList.addLast(new PostInfo("标题"+ (mPostList.size() + 1), "测试样例内容", TYPE_POST_CARD));
-                if(mPostList.size() == 20){
-                    mLastHolder.mTitle = "没有更多内容了哦~";
-                }
-                mPostList.addLast(mLastHolder);
-                mAdapter.notifyDataSetChanged();
-                */
             }
             else{
                 Log.d(TAG_LOG, "onClick: ViewHolder");
@@ -164,10 +183,12 @@ public class PostViewAdapter extends
     public void changeTail(boolean ifNoMore){
         PostInfo mLastHolder = mPostList.getLast();
         if(ifNoMore){
-            mLastHolder.mTitle = "没有更多内容了哦~";
+            mLastHolder.setType(TYPE_NULLTAIL);
+            mLastHolder.setTitle("没有更多内容了哦~");
         }
         else{
-            mLastHolder.mTitle = "点击加载更多~";
+            mLastHolder.setType(TYPE_TAIL);
+            mLastHolder.setTitle( "点击加载更多~");
         }
         notifyDataSetChanged();
     }
@@ -183,7 +204,7 @@ public class PostViewAdapter extends
                                                              int viewType) {
         // Inflate an item view.
         View tmpView;
-        if(viewType == PostViewAdapter.TYPE_TAIL){
+        if(viewType == PostViewAdapter.TYPE_TAIL || viewType == PostViewAdapter.TYPE_NULLTAIL){
             tmpView = mInflater.inflate(R.layout.component_loadmore, parent, false);
         }
         else {
@@ -194,14 +215,26 @@ public class PostViewAdapter extends
 
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
-        String mTitle = mPostList.get(position).getTitle();
-        String mContent = mPostList.get(position).getContent();
+        PostInfo postInfo = mPostList.get(position);
         if(holder.mType == TYPE_POST_CARD) {
-            holder.titleView.setText(mTitle);
-            holder.contentView.setText(mContent);
+            holder.titleView.setText(postInfo.getTitle());
+            holder.contentView.setText(postInfo.getContent());
+            holder.pidView.setText(postInfo.getPostIDString());
+            holder.commentView.setText(String.valueOf(postInfo.post.n_reply));
+            holder.zanView.setText(String.valueOf(postInfo.post.n_dianzan));
+            holder.usernameView.setText(postInfo.post.username);
+            holder.datetimeView.setText(postInfo.post.datetime);
+            if(postInfo.post.userProfileUri == null){
+                holder.userProfileView.setImageResource(R.drawable.user_profile_default);
+            }
+            else{
+                Drawable drawable = Drawable.createFromPath(postInfo.post.userProfileUri.getPath());
+                holder.userProfileView.setImageDrawable(drawable);
+                Log.d("Image", "set");
+            }
         }
-        else if(holder.mType == TYPE_TAIL){
-            holder.loadMoreView.setText(mTitle);
+        else if(holder.mType == TYPE_TAIL || holder.mType == TYPE_NULLTAIL){
+            holder.loadMoreView.setText(postInfo.getTitle());
         }
     }
 

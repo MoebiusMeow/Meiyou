@@ -1,28 +1,31 @@
 package com.example.meiyou.utils;
 
+import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
 import android.content.res.ColorStateList;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.meiyou.control.RegisterControl;
 import com.example.meiyou.model.MainUser;
 
-public class GlobalData {
-    private MainUser mainUser;
-    private RegisterControl registerControl;
-    private static GlobalData instant = null;
-    private GlobalData(){
-        registerControl = new RegisterControl();
-        mainUser = new MainUser();
+public class GlobalData extends Application {
+    private static Context context = null;
+    private static MainUser mainUser= new MainUser();
+    private static RegisterControl registerControl= new RegisterControl();
+
+
+    @Override
+    public void onCreate(){
+        super.onCreate();
+        context=getApplicationContext();
     }
+    public static Context getContext(){return context;}
     public static MainUser getUser(){
-        return getInstant().mainUser;
+        return mainUser;
     }
-    public static RegisterControl getRegisterControl(){return getInstant().registerControl;}
-    public static GlobalData getInstant(){
-        if(instant == null){
-            instant = new GlobalData();
-        }
-        return instant;
-    }
+    public static RegisterControl getRegisterControl(){return registerControl;}
 
 
     public static ColorStateList createColorStateList(int pressed, int normal) {

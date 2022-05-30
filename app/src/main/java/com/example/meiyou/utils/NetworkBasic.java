@@ -1,5 +1,7 @@
 package com.example.meiyou.utils;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
@@ -38,7 +40,8 @@ public class NetworkBasic {
                     func.run(response);
                 }
                 catch(Exception e){
-                    status.postValue(Status.fail);
+                    Log.e("Network", "onResponse: ", e);
+                    status.postValue(Status.wrong);
                 }
             }
         };

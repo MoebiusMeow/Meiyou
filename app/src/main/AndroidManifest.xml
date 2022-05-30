@@ -12,6 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Meiyou"
+        android:name=".utils.GlobalData"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".activity.RegisterActivity"
