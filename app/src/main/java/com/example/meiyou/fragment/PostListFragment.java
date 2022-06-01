@@ -60,21 +60,7 @@ public class PostListFragment extends Fragment {
                         Post post = postListModel.get(i);
                         mAdapter.addPost(PostViewAdapter.PostInfo.fromPost(post));
 
-                        // Download User Profile
-                        /*if(post.profile_id >=0) {
-                            FileDownloader fileDownloader = new FileDownloader();
-                            fileDownloader.status.observe(getViewLifecycleOwner(), new Observer<NetworkBasic.Status>() {
-                                @Override
-                                public void onChanged(NetworkBasic.Status status) {
-                                    if (status == NetworkBasic.Status.success) {
-                                        post.userProfileUri = fileDownloader.result;
-                                        mAdapter.notifyDataSetChanged();
-                                        Log.d("Image", "onChanged: sccess");
-                                    }
-                                }
-                            });
-                            fileDownloader.get(post.profile_id);
-                        }*/
+                        // Download user profile
                         if(post.profile_id >= 0) {
                             GlobalResFileManager.requestFile(getViewLifecycleOwner(), post.profile_id, uri -> {
                                 post.userProfileUri = uri;
@@ -102,18 +88,14 @@ public class PostListFragment extends Fragment {
     }
 
     public void load(){
-        Log.d("NETDCY", "load: ");
         binding.progressBar2.setVisibility(View.VISIBLE);
         postListModel.pull_post(N_POST_GET, mode, false);
     }
 
     public void fresh(){
-        Log.d("NETDCY", "fresh: ");
         mAdapter.clear();
         postListModel.clear();
         binding.progressBar2.setVisibility(View.VISIBLE);
         postListModel.pull_post(N_POST_GET, mode, true);
     }
-
-
 }

@@ -4,16 +4,27 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.os.Environment;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.meiyou.control.RegisterControl;
 import com.example.meiyou.model.MainUser;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class GlobalData extends Application {
     private static Context context = null;
     private static MainUser mainUser= new MainUser();
     private static RegisterControl registerControl= new RegisterControl();
+
+    public static final int FILE_TYPE_NONE = 0;
+    public static final int FILE_TYPE_IMG = 10;
+    public static final int FILE_TYPE_VID = 20;
+    public static final int FILE_TYPE_AUD = 30;
 
 
     @Override
@@ -41,5 +52,8 @@ public class GlobalData extends Application {
         ColorStateList colorList = new ColorStateList(states, colors);
         return colorList;
     }
+
+
+
 
 }

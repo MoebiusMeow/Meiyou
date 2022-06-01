@@ -2,9 +2,11 @@ package com.example.meiyou.utils;
 
 import android.app.Activity;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
@@ -24,6 +26,7 @@ public class NetworkConstant extends Activity {
     public static final String getMultiplePostUrl = serverUrl + "/getpost";
     public static final String sendPostUrl = serverUrl + "/post";
     public static final String downloadUrl = serverUrl + "/download";
+    public static final String uploadUrl = serverUrl + "/upload";
 
     /* Method to build http Call */
     public static final OkHttpClient client = new OkHttpClient.Builder()
@@ -33,19 +36,23 @@ public class NetworkConstant extends Activity {
             .build();
 
     private static ConnectionPool mConnectionPool=new ConnectionPool(1000, 30, TimeUnit.MINUTES);
-    public static void post(String url, RequestBody body, Boolean login_required, Callback callback){
+    public static Call post(String url, RequestBody body, Boolean login_required, Callback callback){
         Request.Builder requestBuilder = new Request.Builder().url(url).post(body)
                 .header("Connection", "close");
         if(login_required)
             requestBuilder.header("Authorization", GlobalData.getUser().getToken());
-        client.newCall(requestBuilder.build()).enqueue(callback);
+        Call call = client.newCall(requestBuilder.build());
+        call.enqueue(callback);
+        return call;
     }
-    public static void get(String url, Boolean login_required, Callback callback){
+    public static Call get(String url, Boolean login_required, Callback callback){
         Request.Builder requestBuilder = new Request.Builder().url(url).get()
                 .header("Connection", "close");
         if(login_required)
             requestBuilder.header("Authorization", GlobalData.getUser().getToken());
-        client.newCall(requestBuilder.build()).enqueue(callback);
+        Call call = client.newCall(requestBuilder.build());
+        call.enqueue(callback);
+        return call;
     }
     public static String getHeaderFileName(Response response) {
         String dispositionHeader = response.header("Content-Disposition");

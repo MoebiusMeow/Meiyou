@@ -63,7 +63,6 @@ public class MainUser extends NetworkBasic {
                 .build();
         NetworkConstant.post(NetworkConstant.registerUrl, body, false, getCommonNetworkCallback(
                 response -> {
-                    Log.d("NETDCT", "register: in");
                     JSONObject jsonObject = new JSONObject(response.body().string());
                     if (response.code() != 200) {
                         status.postValue(Status.wrong);

@@ -31,6 +31,7 @@ public class NetworkBasic {
         return new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.e("Network", "onResponse: ", e);
                 status.postValue(Status.fail);
             }
 
