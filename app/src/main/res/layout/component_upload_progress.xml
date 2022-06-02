@@ -55,4 +55,12 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/close"
         app:tint="#D32F2F" />
+
+    <ImageView
+        android:id="@+id/imageViewUpload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/textName"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
 </androidx.constraintlayout.widget.ConstraintLayout>

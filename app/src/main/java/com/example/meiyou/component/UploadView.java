@@ -1,10 +1,13 @@
 package com.example.meiyou.component;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -23,6 +26,7 @@ public class UploadView extends RelativeLayout {
     private ProgressBar progressBar;
     private TextView textName, textProgress;
     private ImageButton buttonCancel;
+    private ImageView imageView;
 
     private MutableLiveData<Float> progress = new MutableLiveData<>();
 
@@ -32,6 +36,7 @@ public class UploadView extends RelativeLayout {
         progressBar = findViewById(R.id.progressBarUpload);
         textName = findViewById(R.id.textName);
         textProgress = findViewById(R.id.textProgress);
+        imageView = findViewById(R.id.imageViewUpload);
 
         progressBar.setMax(100);
 
@@ -48,6 +53,10 @@ public class UploadView extends RelativeLayout {
         buttonCancel.setOnClickListener(view -> {
             callback.onCancel();
         });
+    }
+
+    public void setImageUri(Uri uri) {
+        imageView.setImageURI(uri);
     }
 
     public void setProgressBar(float progress){

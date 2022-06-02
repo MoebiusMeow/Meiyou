@@ -83,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onChanged(MainUser.Status status) {
                 if(status == NetworkBasic.Status.success){
                     loadingProgressBar.setVisibility(View.INVISIBLE);
-                    Intent intent = new Intent(LoginActivity.this, NewContentActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     activityResultLauncher.launch(intent);
                 }
                 else if(status == NetworkBasic.Status.wrong){

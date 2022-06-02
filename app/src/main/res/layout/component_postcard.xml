@@ -1,157 +1,211 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         app:cardBackgroundColor="@color/green_0"
-        app:cardCornerRadius="10dp">
+        app:cardCornerRadius="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
-            android:orientation="vertical">
+            android:layout_margin="8dp">
 
-            <TextView
-                android:id="@+id/post_card_title"
+            <LinearLayout
+                android:id="@+id/linearLayout2"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:textColor="#6B854D"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/InfoArea"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:id="@+id/postUserProfile"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:layout_marginStart="4dp"
-                    android:contentDescription="User Profile"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:srcCompat="@tools:sample/avatars" />
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:id="@+id/textPostUsername"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/post_card_title"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:text="User name"
-                    android:textSize="11sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/postUserProfile"
-                    app:layout_constraintStart_toEndOf="@+id/postUserProfile" />
+                    android:ems="10"
+                    android:textColor="#6B854D"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/textDateTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:text="TextView"
-                    android:textSize="11sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/textPostID" />
-
-                <TextView
-                    android:id="@+id/textPostID"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:text="TextView"
-                    android:textSize="11sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="5dp"
-                android:background="?android:attr/listDivider" />
-
-            <TextView
-                android:id="@+id/post_card_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/FootArea"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:orientation="horizontal"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/linearLayout"
-                    app:layout_constraintTop_toTopOf="parent">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/InfoArea"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/imageView5"
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:layout_weight="1"
-                        app:srcCompat="@drawable/comment"
-                        app:tint="@color/green_400" />
+                        android:id="@+id/postUserProfile"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_marginStart="4dp"
+                        android:contentDescription="User Profile"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:srcCompat="@tools:sample/avatars" />
 
                     <TextView
-                        android:id="@+id/textNReply"
+                        android:id="@+id/textPostUsername"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_weight="1"
-                        android:text="TextView"
-                        android:textSize="10sp" />
-                </LinearLayout>
+                        android:layout_marginStart="6dp"
+                        android:text="User name"
+                        android:textSize="11sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/postUserProfile"
+                        app:layout_constraintStart_toEndOf="@+id/postUserProfile" />
 
-                <LinearLayout
-                    android:id="@+id/linearLayout"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/textDateTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:text="TextView"
+                        android:textSize="11sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/textPostID" />
+
+                    <TextView
+                        android:id="@+id/textPostID"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:text="TextView"
+                        android:textSize="11sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="?android:attr/listDivider" />
+
+                <TextView
+                    android:id="@+id/post_card_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent">
+                    android:ems="10" />
 
-                    <ImageView
-                        android:id="@+id/imageView3"
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:layout_marginStart="5dp"
-                        android:layout_weight="1"
-                        android:tintMode="src_in"
-                        app:srcCompat="@drawable/zan"
-                        app:tint="@color/green_400" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/FootArea"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                    <TextView
-                        android:id="@+id/textNZan"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_weight="1"
-                        android:text="TextView"
-                        android:textSize="10sp" />
-                </LinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </LinearLayout>
+                        android:layout_marginStart="24dp"
+                        android:orientation="horizontal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/linearLayout"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                            android:id="@+id/imageView5"
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_weight="1"
+                            app:srcCompat="@drawable/comment"
+                            app:tint="@color/green_400" />
+
+                        <TextView
+                            android:id="@+id/textNReply"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_weight="1"
+                            android:text="TextView"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent">
+
+                        <ImageView
+                            android:id="@+id/imageView3"
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_weight="1"
+                            android:tintMode="src_in"
+                            app:srcCompat="@drawable/zan"
+                            app:tint="@color/green_400" />
+
+                        <TextView
+                            android:id="@+id/textNZan"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_weight="1"
+                            android:text="TextView"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"
+                app:cardBackgroundColor="@color/pink_200"
+                app:cardCornerRadius="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/textView4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:text="删除"
+                        android:textColor="@color/red_0"
+                        android:textSize="11sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.cardview.widget.CardView>
-</RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,6 +9,7 @@ import android.os.Environment;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.meiyou.control.RegisterControl;
+import com.example.meiyou.model.DraftList;
 import com.example.meiyou.model.MainUser;
 
 import java.io.File;
@@ -21,16 +22,21 @@ public class GlobalData extends Application {
     private static MainUser mainUser= new MainUser();
     private static RegisterControl registerControl= new RegisterControl();
 
-    public static final int FILE_TYPE_NONE = 0;
-    public static final int FILE_TYPE_IMG = 10;
-    public static final int FILE_TYPE_VID = 20;
-    public static final int FILE_TYPE_AUD = 30;
+    public static final int FILE_TYPE_NONE  = 0;
+    public static final int FILE_TYPE_IMG   = 10;
+    public static final int FILE_TYPE_VID   = 20;
+    public static final int FILE_TYPE_AUD   = 30;
+
+    public static DraftList draftList;
+
+
 
 
     @Override
     public void onCreate(){
         super.onCreate();
         context=getApplicationContext();
+        draftList = new DraftList(new File(getFilesDir(), "/drafts.data"));
     }
     public static Context getContext(){return context;}
     public static MainUser getUser(){
