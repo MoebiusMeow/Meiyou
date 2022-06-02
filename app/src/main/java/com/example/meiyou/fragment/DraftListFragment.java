@@ -32,7 +32,20 @@ public class DraftListFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
-        mAdapter.changeTail(false);
+        mAdapter.changeTail(true);
+
+        DraftList draftList = GlobalData.draftList;
+        draftList.setOnUpdateCallback(startIndex -> {
+            if(startIndex <= 0) mAdapter.clear();
+            for(int i=startIndex;i<draftList.len();i++) {
+                PostViewAdapter.PostInfo postInfo = PostViewAdapter.PostInfo
+                        .fromPost(draftList.get(i));
+                postInfo.setStyle(PostViewAdapter.STYLE_NOT_PUBLISHED);
+                mAdapter.addPost(postInfo);
+            }
+        });
+
+        load();
 
         return view;
     }
@@ -40,6 +53,5 @@ public class DraftListFragment extends Fragment {
     public void load(){
         DraftList draftList = GlobalData.draftList;
         draftList.loadFromFile();
-        // Append to Adapter
     }
 }
