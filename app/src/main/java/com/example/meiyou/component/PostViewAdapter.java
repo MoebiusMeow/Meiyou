@@ -34,12 +34,18 @@ public class PostViewAdapter extends
     public interface LoadMoreAction{
         void Onclick();
     }
+    public interface ClickedPostcardAction{
+        void Onclick(PostInfo postInfo);
+    }
 
     private LoadMoreAction loadMoreAction = () -> { };
+    private ClickedPostcardAction clickedPostcardAction = postInfo -> { };
 
     public void setOnLoadMoreAction(LoadMoreAction action){
         loadMoreAction = action;
     }
+
+    public void setOnClickedPost(ClickedPostcardAction action){ clickedPostcardAction = action; }
 
     public PostViewAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
@@ -71,6 +77,7 @@ public class PostViewAdapter extends
         public String getTitle(){ return post.title; }
         public String getContent(){ return post.content; }
         public int getType(){return type;}
+        public Post getPost(){return post;}
 
         public void setTitle(String mTitle){
             this.post.title = mTitle.substring(0, Math.min(MAX_TITLE_LEN, mTitle.length()));
@@ -112,6 +119,7 @@ public class PostViewAdapter extends
 
         final PostViewAdapter mAdapter;
         private final int mType;
+        private PostInfo postInfo;
 
         public static final String TAG_LOG = "PostViewAdapter";
 
@@ -127,6 +135,7 @@ public class PostViewAdapter extends
         }
 
         public void bindPostInfo(PostInfo postInfo){
+            this.postInfo = postInfo;
             if(mType == TYPE_POST_CARD && postCardBinding !=null) {
                 postCardBinding.postCardTitle.setText(postInfo.getTitle());
                 postCardBinding.postCardContent.setText(postInfo.getContent());
@@ -138,11 +147,12 @@ public class PostViewAdapter extends
                 if (postInfo.post.userProfileUri == null) {
                     postCardBinding.postUserProfile.setImageResource(R.drawable.user_profile_default);
                 } else {
+                    Log.d("TAG", "bindPostInfo: bind post profile"+postInfo.post.userProfileUri.getPath());
                     Drawable drawable = Drawable.createFromPath(postInfo.post.userProfileUri.getPath());
                     postCardBinding.postUserProfile.setImageDrawable(drawable);
                 }
             }
-            if(postInfo.style == STYLE_NOT_PUBLISHED){
+            if(postInfo.style == STYLE_NOT_PUBLISHED) {
                 postCardBinding.FootArea.setVisibility(View.GONE);
                 postCardBinding.postUserProfile.setVisibility(View.GONE);
                 postCardBinding.textPostUsername.setVisibility(View.GONE);
@@ -162,7 +172,7 @@ public class PostViewAdapter extends
                 loadMoreAction.Onclick();
             }
             else{
-                Log.d(TAG_LOG, "onClick: ViewHolder");
+                clickedPostcardAction.Onclick(this.postInfo);
             }
         }
     }

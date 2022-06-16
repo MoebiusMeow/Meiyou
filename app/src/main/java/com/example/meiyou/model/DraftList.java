@@ -16,6 +16,8 @@ import java.util.ArrayList;
 public class DraftList {
 
     public interface UpdateCallback{
+        // indicate modified post start from <startIndex>
+        // when all post renewed, <startIndex> should be 0
         void onUpdate(int startIndex);
     }
 
@@ -39,11 +41,12 @@ public class DraftList {
     public int len(){ return postList.size(); }
     public Post get(int index){ return postList.get(index); }
     public void add(Post post){postList.add(post); updateCallback.onUpdate(len()-1);}
+    public void remove(Post post){postList.remove(post); updateCallback.onUpdate(0);}
     public void setOnUpdateCallback(UpdateCallback callback){updateCallback = callback;}
 
     public void saveToFile(){
         try {
-            FileOutputStream outputStream = new FileOutputStream(dataFile);
+            FileOutputStream outputStream = new FileOutputStream(dataFile, false);
             ObjectOutputStream objectStream = new ObjectOutputStream(outputStream);
             objectStream.writeObject(postList);
             objectStream.close();
@@ -57,7 +60,6 @@ public class DraftList {
 
     public void loadFromFile(){
         try {
-            Log.d("TAG", "loadFromFile: "+dataFile.canRead());
             FileInputStream inputStream = new FileInputStream(dataFile);
             ObjectInputStream objectStream = new ObjectInputStream(inputStream);
             postList = (ArrayList<Post>) objectStream.readObject();
