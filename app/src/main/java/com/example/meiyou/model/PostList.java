@@ -18,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import okhttp3.HttpUrl;
 import okio.BufferedSink;
@@ -76,6 +77,23 @@ public class PostList extends NetworkBasic {
                     post.n_dianzan = postObj.getInt("dianzan");
                     post.n_reply = postObj.getInt("nreply");
                     post.datetime = postObj.getString("datetime");
+
+                    String post_id_str =  postObj.getString("resids");
+                    if(post_id_str != null && !post_id_str.equals("null")) {
+                        ArrayList<Integer> res_ids = new ArrayList<>();
+                        for (String id_str : post_id_str.split(";")) {
+                            if (!id_str.isEmpty() && isNumeric(id_str)) {
+                                res_ids.add(Integer.valueOf(id_str));
+                            }
+                        }
+                        post.res_ids = res_ids;
+                    }
+
+                    String post_res_type = postObj.getString("restype");
+                    if(post_res_type != null && !post_res_type.equals("null")){
+                        post.res_type = Integer.valueOf(post_res_type);
+                    }
+
                     if(!postObj.isNull("userprofileid"))
                         post.profile_id = postObj.getInt("userprofileid");
                     postList.add(post);
@@ -83,5 +101,10 @@ public class PostList extends NetworkBasic {
                 status.postValue(Status.success);
             }
         ));
+    }
+
+    public static boolean isNumeric(String str){
+        Pattern pattern = Pattern.compile("[0-9]*");
+        return pattern.matcher(str).matches();
     }
 }

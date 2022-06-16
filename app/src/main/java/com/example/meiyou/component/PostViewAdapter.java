@@ -1,13 +1,19 @@
 package com.example.meiyou.component;
 
+import static com.example.meiyou.utils.GlobalData.FILE_TYPE_IMG;
+import static com.example.meiyou.utils.GlobalData.FILE_TYPE_NONE;
+
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.gridlayout.widget.GridLayout;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.meiyou.R;
@@ -18,6 +24,7 @@ import com.example.meiyou.model.Post;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 
@@ -39,7 +46,9 @@ public class PostViewAdapter extends
     }
 
     private LoadMoreAction loadMoreAction = () -> { };
-    private ClickedPostcardAction clickedPostcardAction = postInfo -> { };
+    private ClickedPostcardAction clickedPostcardAction = postInfo -> {
+        Log.d("PostInfo", ": res_id="+postInfo.post.res_ids);
+    };
 
     public void setOnLoadMoreAction(LoadMoreAction action){
         loadMoreAction = action;
@@ -121,10 +130,16 @@ public class PostViewAdapter extends
         private final int mType;
         private PostInfo postInfo;
 
+        Context parentContext;
+
         public static final String TAG_LOG = "PostViewAdapter";
 
-        public PostCard(View itemView, PostViewAdapter adapter, int _type) {
+        private ArrayList<DownloadView> attatchedViewList = new ArrayList<>();
+        private int resType = FILE_TYPE_NONE;
+
+        public PostCard(View itemView, PostViewAdapter adapter, Context context, int _type) {
             super(itemView);
+            parentContext = context;
             if(_type == TYPE_POST_CARD)
                 postCardBinding = ComponentPostcardBinding.bind(itemView);
             if(_type == TYPE_EMPTY_TAIL || _type == TYPE_TAIL)
@@ -157,6 +172,51 @@ public class PostViewAdapter extends
                 postCardBinding.postUserProfile.setVisibility(View.GONE);
                 postCardBinding.textPostUsername.setVisibility(View.GONE);
                 postCardBinding.textPostID.setVisibility(View.GONE);
+            }
+        }
+
+        public void createAttachmentView(){
+            Context context = parentContext;
+            if(postInfo != null && postInfo.post != null && postInfo.post.res_ids != null) {
+                ArrayList<Integer> id_list = postInfo.post.res_ids;
+                int type = postInfo.post.res_type;
+                if (type == FILE_TYPE_IMG && type != resType) {
+                    resType = FILE_TYPE_IMG;
+                    int n = id_list.size();
+                    if (n > 0) {
+                        GridLayout gridLayout = postCardBinding.postResGrid;
+                        gridLayout.removeAllViews();
+                        attatchedViewList.clear();
+                        for (int i = 0; i < n; i++) {
+                            DownloadView downloadView = new DownloadView(context);
+                            downloadView.setImageResource(R.drawable.defaultimage);
+                            attatchedViewList.add(downloadView);
+                            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+                            params.width = 0;
+                            params.rowSpec = GridLayout.spec((int)(i/3),1,1f);
+                            params.columnSpec = GridLayout.spec((int)(i%3),1,1f);
+                            params.setMargins(2,2,2,2);
+                            gridLayout.addView(downloadView, params);
+                        }
+                    }
+                }
+            }
+        }
+
+        public void updateAttatchmentView(){
+            if(postInfo != null && postInfo.post != null) {
+                ArrayList<Uri> uri_list = postInfo.post.res_uri_list;
+                for (int i = 0; i < attatchedViewList.size(); i++) {
+                    if(i>=uri_list.size())break;
+                    DownloadView view = attatchedViewList.get(i);
+                    Uri uri = uri_list.get(i);
+                    if (uri != null) {
+                        Log.d("Post Attatcj=h", "updateAttatchmentView: "+uri.getPath());
+                        Drawable drawable = Drawable.createFromPath(uri.getPath());
+                        view.setImageDrawable(drawable);
+                        view.hideMask();
+                    }
+                }
             }
         }
 
@@ -222,7 +282,8 @@ public class PostViewAdapter extends
         else {
             tmpView = mInflater.inflate(R.layout.component_postcard, parent, false);
         }
-        return new PostCard(tmpView, this, viewType);
+        PostCard postCard = new PostCard(tmpView, this, parent.getContext(), viewType);
+        return postCard;
     }
 
     @Override
@@ -234,6 +295,8 @@ public class PostViewAdapter extends
         else if(holder.mType == TYPE_TAIL || holder.mType == TYPE_EMPTY_TAIL){
             holder.bindTailTitle(postInfo.getTitle());
         }
+        holder.createAttachmentView();
+        holder.updateAttatchmentView();
     }
 
     @Override

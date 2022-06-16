@@ -1,6 +1,7 @@
 package com.example.meiyou.fragment;
 
-import android.net.Uri;
+import static com.example.meiyou.utils.GlobalData.FILE_TYPE_NONE;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,7 +11,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,20 +18,28 @@ import com.example.meiyou.component.PostViewAdapter;
 import com.example.meiyou.databinding.FragmentPostlistBinding;
 import com.example.meiyou.model.Post;
 import com.example.meiyou.model.PostList;
+import com.example.meiyou.utils.GlobalData;
 import com.example.meiyou.utils.GlobalResFileManager;
 import com.example.meiyou.utils.NetworkBasic;
 
-public class PostListFragment extends Fragment {
-    private FragmentPostlistBinding binding;
-    private PostViewAdapter mAdapter;
+import java.util.ArrayList;
 
-    private final PostList postListModel = new PostList();
-    private static final int N_POST_GET = 20;
+public class PostListFragment extends Fragment {
+    protected FragmentPostlistBinding binding;
+    protected PostViewAdapter mAdapter;
+
+    protected final PostList postListModel = new PostList();
+    protected static final int N_POST_GET = 20;
     public int mode;
 
     public PostListFragment(int _mode){
         mode = _mode;
     }
+    public PostListFragment(){
+        mode = 4;
+    }
+
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -66,6 +74,21 @@ public class PostListFragment extends Fragment {
                             Log.d("Image", "onChanged: " + uri.toString());
                         });
                     }
+
+                    // Download attatchment
+                    if(post.res_type != FILE_TYPE_NONE){
+                        ArrayList<Integer> res_ids = post.res_ids;
+                        post.res_uri_list.clear();
+                        for(int res_id:res_ids) post.res_uri_list.add(null);
+                        for (int j=0; j<post.res_ids.size(); j++) {
+                            int res_id = res_ids.get(j);
+                            int finalJ = j;
+                            GlobalResFileManager.requestFile(getViewLifecycleOwner(), res_id, uri -> {
+                                post.res_uri_list.set(finalJ, uri);
+                                mAdapter.notifyDataSetChanged();
+                            });
+                        }
+                    }
                 }
                 boolean ifNoMore = (postListModel.len() - postListModel.new_start) != N_POST_GET;
                 mAdapter.changeTail(ifNoMore);
@@ -74,7 +97,7 @@ public class PostListFragment extends Fragment {
 
         mAdapter.setOnLoadMoreAction(() -> load());
 
-        fresh();
+        refresh();
 
         return view;
     }
@@ -84,10 +107,14 @@ public class PostListFragment extends Fragment {
         postListModel.pull_post(N_POST_GET, mode, false);
     }
 
-    public void fresh(){
+    public void refresh(){
         mAdapter.clear();
         postListModel.clear();
         binding.progressBar2.setVisibility(View.VISIBLE);
         postListModel.pull_post(N_POST_GET, mode, true);
+    }
+
+    public void setUserID(int user_id){
+        postListModel.setFixUser(user_id);
     }
 }

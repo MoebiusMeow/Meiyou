@@ -18,6 +18,9 @@
         android:theme="@style/Theme.Meiyou"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activity.SinglePostActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.ChangePasswordActivity"
             android:exported="false" />
         <activity
@@ -36,9 +39,9 @@
             android:label="NewContentActivity" />
         <activity
             android:name=".activity.LoginActivity"
-            android:launchMode="singleTask"
             android:exported="true"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
