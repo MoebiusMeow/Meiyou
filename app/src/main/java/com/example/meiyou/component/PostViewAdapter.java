@@ -1,16 +1,19 @@
 package com.example.meiyou.component;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.meiyou.R;
+import com.example.meiyou.databinding.ComponentLoadmoreBinding;
+import com.example.meiyou.databinding.ComponentPostcardBinding;
+import com.example.meiyou.databinding.ComponentUploadProgressBinding;
 import com.example.meiyou.model.Post;
 
 import org.jetbrains.annotations.NotNull;
@@ -19,24 +22,30 @@ import java.util.LinkedList;
 
 
 // Hold Post List
+//
 public class PostViewAdapter extends
-        RecyclerView.Adapter<PostViewAdapter.PostViewHolder>{
-    private final LinkedList<PostInfo> mPostList = new LinkedList<PostInfo>();
+        RecyclerView.Adapter<PostViewAdapter.PostCard>{
+    private final LinkedList<PostInfo> mPostList = new LinkedList<>();
     private final LayoutInflater mInflater;
     public static final int MAX_TITLE_LEN = 20, MAX_CONTENT_LEN = 80;
-    public static final int TYPE_POST_CARD = 0x01, TYPE_TAIL = 0x02;
+    public static final int TYPE_POST_CARD = 0x01, TYPE_TAIL = 0x02, TYPE_EMPTY_TAIL = 0x03;
+    public static final int STYLE_STANDARD = 0x01, STYLE_NOT_PUBLISHED = 0x02;
 
     public interface LoadMoreAction{
-        public void Onclick();
+        void Onclick();
+    }
+    public interface ClickedPostcardAction{
+        void Onclick(PostInfo postInfo);
     }
 
-    private LoadMoreAction loadMoreAction = new LoadMoreAction() {
-        @Override public void Onclick() { }
-    };
+    private LoadMoreAction loadMoreAction = () -> { };
+    private ClickedPostcardAction clickedPostcardAction = postInfo -> { };
 
     public void setOnLoadMoreAction(LoadMoreAction action){
         loadMoreAction = action;
     }
+
+    public void setOnClickedPost(ClickedPostcardAction action){ clickedPostcardAction = action; }
 
     public PostViewAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
@@ -45,103 +54,125 @@ public class PostViewAdapter extends
 
 
     // Hold Post Card data
+    // Data passed to display should be process here
     public static class PostInfo{
-        private String mTitle = "";
-        private String mContent = "";
-        private int mtype = TYPE_POST_CARD;
+        private final Post post;
+        private int type = TYPE_POST_CARD;
+        private int style = STYLE_STANDARD;
 
         public static PostInfo fromPost(Post post){
-            return new PostInfo(post.title, post.content, TYPE_POST_CARD);
+            return new PostInfo(post);
         }
 
-        public PostInfo(String mTitle, String mContent, int mType ) {
-            this.setTitle(mTitle);
-            this.setContent(mContent);
-            this.setType(mType);
+        public PostInfo(String title, String content, int type){
+            post = new Post();
+            setTitle(title);
+            setContent(content);
+            this.type = type;
         }
-        public String getTitle(){ return mTitle; }
-        public String getContent(){ return mContent; }
-        public int getType(){return mtype;}
 
-        public boolean setTitle(String mTitle){
-            this.mTitle = mTitle.substring(0, Math.min(MAX_TITLE_LEN, mTitle.length()));
+        public PostInfo(Post post ) {
+            this.post = post;
+        }
+        public String getTitle(){ return post.title; }
+        public String getContent(){ return post.content; }
+        public int getType(){return type;}
+        public Post getPost(){return post;}
+
+        public void setTitle(String mTitle){
+            this.post.title = mTitle.substring(0, Math.min(MAX_TITLE_LEN, mTitle.length()));
             if(mTitle.length()>MAX_TITLE_LEN){
-                this.mTitle = this.mTitle.concat("...");
-                return true;
+                this.post.title = this.post.title.concat("...");
             }
-            return false;
         }
 
-        public  boolean setContent(String mContent){
-            this.mContent = mContent.substring(0, Math.min(MAX_CONTENT_LEN, mContent.length()));
+        public void setStyle(int style){
+            this.style = style;
+        }
+
+        public void setContent(String mContent){
+            this.post.content = mContent.substring(0, Math.min(MAX_CONTENT_LEN, mContent.length()));
             if(mContent.length()>MAX_CONTENT_LEN){
-                this.mTitle = this.mTitle.concat("...");
-                return true;
+                this.post.content = this.post.content.concat("...");
             }
-            return false;
         }
 
-        public  boolean setType(int mtype){
-            if(mtype == TYPE_TAIL || mtype == TYPE_POST_CARD) {
-                this.mtype = mtype;
-                return false;
+        public void setType(int type){
+            if(type == TYPE_TAIL || type == TYPE_POST_CARD || type == TYPE_EMPTY_TAIL) {
+                this.type = type;
+                return;
             }
-            this.mtype = TYPE_POST_CARD;
-            return true;
+            this.type = TYPE_POST_CARD;
+        }
+
+        public String getPostIDString(){
+            return "#"+ post.pid;
         }
     }
 
-    class PostViewHolder extends RecyclerView.ViewHolder
+    class PostCard extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
-        public final TextView titleView,contentView,loadMoreView;
+        public ComponentPostcardBinding postCardBinding = null;
+
+        public ComponentLoadmoreBinding loadMoreBinding = null;
+
         final PostViewAdapter mAdapter;
         private final int mType;
+        private PostInfo postInfo;
 
         public static final String TAG_LOG = "PostViewAdapter";
 
-        public PostViewHolder(View itemView, PostViewAdapter adapter, int _type) {
+        public PostCard(View itemView, PostViewAdapter adapter, int _type) {
             super(itemView);
-            TextView contentView1, titleView1, loadMoreView1;
+            if(_type == TYPE_POST_CARD)
+                postCardBinding = ComponentPostcardBinding.bind(itemView);
+            if(_type == TYPE_EMPTY_TAIL || _type == TYPE_TAIL)
+                loadMoreBinding = ComponentLoadmoreBinding.bind(itemView);
             mType = _type;
-            titleView1 = contentView1 = loadMoreView1 = null;
-            if(mType == TYPE_POST_CARD) {
-                titleView1 = itemView.findViewById(R.id.post_card_title);
-                contentView1 = itemView.findViewById(R.id.post_card_content);
-            }
-            else if(mType == TYPE_TAIL){
-                loadMoreView1 = itemView.findViewById(R.id.loadMoreText);
-            }
-            else{
-                Log.d(TAG_LOG, "Unexpected type");
-            }
-            contentView = contentView1;
-            titleView = titleView1;
-            loadMoreView = loadMoreView1;
             this.mAdapter = adapter;
             itemView.setOnClickListener(this);
         }
 
+        public void bindPostInfo(PostInfo postInfo){
+            this.postInfo = postInfo;
+            if(mType == TYPE_POST_CARD && postCardBinding !=null) {
+                postCardBinding.postCardTitle.setText(postInfo.getTitle());
+                postCardBinding.postCardContent.setText(postInfo.getContent());
+                postCardBinding.textPostID.setText(postInfo.getPostIDString());
+                postCardBinding.textNReply.setText(String.valueOf(postInfo.post.n_reply));
+                postCardBinding.textNZan.setText(String.valueOf(postInfo.post.n_dianzan));
+                postCardBinding.textPostUsername.setText(postInfo.post.username);
+                postCardBinding.textDateTime.setText(postInfo.post.datetime);
+                if (postInfo.post.userProfileUri == null) {
+                    postCardBinding.postUserProfile.setImageResource(R.drawable.user_profile_default);
+                } else {
+                    Log.d("TAG", "bindPostInfo: bind post profile"+postInfo.post.userProfileUri.getPath());
+                    Drawable drawable = Drawable.createFromPath(postInfo.post.userProfileUri.getPath());
+                    postCardBinding.postUserProfile.setImageDrawable(drawable);
+                }
+            }
+            if(postInfo.style == STYLE_NOT_PUBLISHED) {
+                postCardBinding.FootArea.setVisibility(View.GONE);
+                postCardBinding.postUserProfile.setVisibility(View.GONE);
+                postCardBinding.textPostUsername.setVisibility(View.GONE);
+                postCardBinding.textPostID.setVisibility(View.GONE);
+            }
+        }
 
+        public void bindTailTitle(String title){
+            if((mType == TYPE_EMPTY_TAIL || mType == TYPE_TAIL) && loadMoreBinding !=null ){
+                loadMoreBinding.loadMoreText.setText(title);
+            }
+        }
 
         @Override
         public void onClick(View view) {
             if(mType == TYPE_TAIL){
                 loadMoreAction.Onclick();
-                /*
-                PostInfo mLastHolder = mPostList.getLast();
-                mPostList.removeLast();
-                for(int i=0; i<10 && mPostList.size()<20; i++)
-                    mPostList.addLast(new PostInfo("标题"+ (mPostList.size() + 1), "测试样例内容", TYPE_POST_CARD));
-                if(mPostList.size() == 20){
-                    mLastHolder.mTitle = "没有更多内容了哦~";
-                }
-                mPostList.addLast(mLastHolder);
-                mAdapter.notifyDataSetChanged();
-                */
             }
             else{
-                Log.d(TAG_LOG, "onClick: ViewHolder");
+                clickedPostcardAction.Onclick(this.postInfo);
             }
         }
     }
@@ -164,10 +195,12 @@ public class PostViewAdapter extends
     public void changeTail(boolean ifNoMore){
         PostInfo mLastHolder = mPostList.getLast();
         if(ifNoMore){
-            mLastHolder.mTitle = "没有更多内容了哦~";
+            mLastHolder.setType(TYPE_EMPTY_TAIL);
+            mLastHolder.setTitle("没有更多内容了哦~");
         }
         else{
-            mLastHolder.mTitle = "点击加载更多~";
+            mLastHolder.setType(TYPE_TAIL);
+            mLastHolder.setTitle( "点击加载更多~");
         }
         notifyDataSetChanged();
     }
@@ -179,29 +212,27 @@ public class PostViewAdapter extends
 
     @NotNull
     @Override
-    public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
-                                                             int viewType) {
+    public PostCard onCreateViewHolder(@NonNull ViewGroup parent,
+                                       int viewType) {
         // Inflate an item view.
         View tmpView;
-        if(viewType == PostViewAdapter.TYPE_TAIL){
+        if(viewType == PostViewAdapter.TYPE_TAIL || viewType == PostViewAdapter.TYPE_EMPTY_TAIL){
             tmpView = mInflater.inflate(R.layout.component_loadmore, parent, false);
         }
         else {
             tmpView = mInflater.inflate(R.layout.component_postcard, parent, false);
         }
-        return new PostViewHolder(tmpView, this, viewType);
+        return new PostCard(tmpView, this, viewType);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
-        String mTitle = mPostList.get(position).getTitle();
-        String mContent = mPostList.get(position).getContent();
+    public void onBindViewHolder(@NonNull PostCard holder, int position) {
+        PostInfo postInfo = mPostList.get(position);
         if(holder.mType == TYPE_POST_CARD) {
-            holder.titleView.setText(mTitle);
-            holder.contentView.setText(mContent);
+            holder.bindPostInfo(postInfo);
         }
-        else if(holder.mType == TYPE_TAIL){
-            holder.loadMoreView.setText(mTitle);
+        else if(holder.mType == TYPE_TAIL || holder.mType == TYPE_EMPTY_TAIL){
+            holder.bindTailTitle(postInfo.getTitle());
         }
     }
 

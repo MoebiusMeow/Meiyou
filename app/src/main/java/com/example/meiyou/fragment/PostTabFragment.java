@@ -12,17 +12,20 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.meiyou.R;
 import com.example.meiyou.model.PostList;
+import com.example.meiyou.utils.GlobalData;
 import com.google.android.material.tabs.TabLayout;
 
 public class PostTabFragment extends Fragment {
 
-    private final PostListFragment newestList = new PostListFragment(PostList.MODE_NEWEST);
-    private final PostListFragment hotList = new PostListFragment(PostList.MODE_HOT);
-    private final PostListFragment followList = new PostListFragment(PostList.MODE_FOLLOW);
+    public final PostListFragment newestList = new PostListFragment(PostList.MODE_NEWEST);
+    public final PostListFragment hotList = new PostListFragment(PostList.MODE_HOT);
+    public final PostListFragment followList = new PostListFragment(PostList.MODE_FOLLOW);
 
     public PostTabFragment(){
 
     }
+    private ViewPager viewPager;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -30,7 +33,7 @@ public class PostTabFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         TabLayout tabLayout = view.findViewById(R.id.tabLayout);
-        ViewPager viewPager = view.findViewById(R.id.postListViewPager);
+        viewPager = view.findViewById(R.id.postListViewPager);
         viewPager.setOffscreenPageLimit(3);
         viewPager.setAdapter(new FragmentStatePagerAdapter(getFragmentManager()){
             @NonNull
@@ -63,8 +66,18 @@ public class PostTabFragment extends Fragment {
                     public void onTabReselected(TabLayout.Tab tab) {
                     }
                 });
+
+        GlobalData.sig_fresh.observe( getViewLifecycleOwner(), integer -> {
+            if(integer == GlobalData.SIG_FRESH_DO){
+                switchToNewest();
+            }
+        });
         return view;
+
     }
 
-
+    public void switchToNewest(){
+        viewPager.setCurrentItem(0, true);
+        newestList.fresh();
+    }
 }

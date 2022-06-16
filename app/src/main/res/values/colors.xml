@@ -7,6 +7,8 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="gray_0">#E2E2E2</color>
+    <color name="gray_100">#BBBBBB</color>
     <color name="gray_200">#888888</color>
     <color name="gray_400">#666666</color>
     <color name="pink_200">#FFBEE0</color>
@@ -14,4 +16,8 @@
     <color name="pink_600">#D86C97</color>
     <color name="pink_700">#CA5986</color>
     <color name="red_0">#DA1C1C</color>
+    <color name="green_0">#EAF8D9</color>
+    <color name="green_200">#C6E3A4</color>
+    <color name="green_400">#809F5B</color>
+    <color name="green_600">#526A36</color>
 </resources>

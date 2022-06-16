@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/imageViewUpload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/uploadMask"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#92000000"
+        app:layout_constraintBottom_toBottomOf="@+id/imageViewUpload"
+        app:layout_constraintEnd_toEndOf="@+id/imageViewUpload"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/imageViewUpload"
+        app:layout_constraintTop_toTopOf="@+id/imageViewUpload">
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/textName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textColor="@color/gray_0"
+        app:layout_constraintEnd_toEndOf="@+id/imageViewUpload"
+        app:layout_constraintStart_toStartOf="@+id/imageViewUpload"
+        app:layout_constraintTop_toTopOf="@+id/imageViewUpload" />
+
+    <TextView
+        android:id="@+id/textProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="80%"
+        android:textColor="@color/gray_0"
+        android:textColorHint="@color/green_600"
+        app:layout_constraintBottom_toBottomOf="@+id/imageViewUpload"
+        app:layout_constraintEnd_toEndOf="@+id/imageViewUpload" />
+
+    <ProgressBar
+        android:id="@+id/progressBarUpload"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="#00FFFFFF"
+        android:indeterminateTint="@color/green_400"
+        android:progressBackgroundTint="@color/green_400"
+        android:progressTint="@color/green_0"
+        android:secondaryProgressTint="@color/green_600"
+        app:layout_constraintBottom_toBottomOf="@+id/imageViewUpload"
+        app:layout_constraintEnd_toStartOf="@+id/textProgress"
+        app:layout_constraintStart_toStartOf="@+id/imageViewUpload" />
+
+    <ImageButton
+        android:id="@+id/buttonCancelUpload"
+        android:layout_width="30dp"
+        android:layout_height="20dp"
+        android:background="#00FFFFFF"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="@+id/imageViewUpload"
+        app:layout_constraintTop_toTopOf="@+id/imageViewUpload"
+        app:srcCompat="@drawable/close"
+        app:tint="#D32F2F" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
