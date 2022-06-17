@@ -3,6 +3,7 @@ package com.example.meiyou.fragment;
 import static com.example.meiyou.model.PostList.MODE_SINGLE_POST;
 import static com.example.meiyou.utils.GlobalData.FILE_TYPE_NONE;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -46,6 +48,14 @@ public class PostListFragment extends Fragment {
 
     private ActivityResultLauncher<Intent> activitySinglePostLauncher;
 
+    public interface OnRenewCallback{
+        void onRenew(int count);
+    }
+    private OnRenewCallback onRenewCallback = count -> {
+        Log.d("TAG", ": haode");
+    };
+    public void setOnRenewCallback(OnRenewCallback action){onRenewCallback = action;}
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -77,6 +87,8 @@ public class PostListFragment extends Fragment {
                 if(mode == MODE_SINGLE_POST )
                     Log.d("SINGLE-POST", "netreturn: newstart="+postListModel.new_start
                             +" end="+postListModel.len());
+                Log.d("Change", "onCreateView: "+postListModel.len());
+                onRenewCallback.onRenew(postListModel.len());
                 for(int i = postListModel.new_start; i< postListModel.len(); i++){
                     Post post = postListModel.get(i);
                     mAdapter.addPost(PostViewAdapter.PostInfo.fromPost(post));
@@ -118,6 +130,31 @@ public class PostListFragment extends Fragment {
                 intent.putExtra(SinglePostActivity.EXTRA_PID, String.valueOf(postInfo.getPost().pid));
                 activitySinglePostLauncher.launch(intent);
             });
+
+        mAdapter.setOnClickedDelete(postInfo -> {
+            AlertDialog alert=new AlertDialog.Builder(this.getActivity()).create();
+            alert.setTitle("删除内容");
+            alert.setMessage("确认要删除吗？（删除后不可恢复）");
+            alert.setButton(DialogInterface.BUTTON_NEGATIVE, "取消", ((dialogInterface, i) -> {
+                return;
+            }));
+            alert.setButton(DialogInterface.BUTTON_POSITIVE, "确定", ((dialogInterface, i) -> {
+                postInfo.getPost().status.observe(getViewLifecycleOwner(), status -> {
+                    if(status == NetworkBasic.Status.fail
+                            || status == NetworkBasic.Status.wrong){
+                        Toast.makeText(getActivity(), "删除失败，请稍后重试...", Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                    if(status == NetworkBasic.Status.success){
+                        Toast.makeText(getActivity(), "删除成功.", Toast.LENGTH_SHORT)
+                                .show();
+                        refresh();
+                    }
+                });
+                postInfo.getPost().request_remove();
+            }));
+            alert.show();
+        });
 
         refresh();
 

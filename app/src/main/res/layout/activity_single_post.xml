@@ -21,7 +21,7 @@
         app:layout_constraintTop_toBottomOf="@+id/constrain_reply" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constrainReply"
+        android:id="@+id/constrainNewReply"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
