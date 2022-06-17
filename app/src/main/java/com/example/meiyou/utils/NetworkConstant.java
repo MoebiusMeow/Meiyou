@@ -29,6 +29,8 @@ public class NetworkConstant extends Activity {
     public static final String uploadUrl = serverUrl + "/upload";
     public static final String setUserInfoUrl = serverUrl + "/setinfo";
     public static final String setPasswordUrl = serverUrl + "/setpasswd";
+    public static final String getReplyUrl = serverUrl + "/getreply";
+    public static final String setDianzanUrl = serverUrl + "/dianzanpost";
 
     /* Method to build http Call */
     public static final OkHttpClient client = new OkHttpClient.Builder()

@@ -63,6 +63,11 @@ public class UploadView extends RelativeLayout {
         this.progress.postValue(progress);
     }
 
+    public void setCancelButtonVisible(boolean if_visible){
+        if(if_visible) buttonCancel.setVisibility(VISIBLE);
+        else buttonCancel.setVisibility(INVISIBLE);
+    }
+
 
     private void _setProgress(float progress){
         if(progress > 1.0){

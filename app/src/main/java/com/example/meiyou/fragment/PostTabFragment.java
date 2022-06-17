@@ -78,6 +78,6 @@ public class PostTabFragment extends Fragment {
 
     public void switchToNewest(){
         viewPager.setCurrentItem(0, true);
-        newestList.fresh();
+        newestList.refresh();
     }
 }
