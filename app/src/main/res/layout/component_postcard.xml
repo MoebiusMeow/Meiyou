@@ -58,7 +58,7 @@
                     <ImageView
                         android:id="@+id/postUserProfile"
                         android:layout_width="18dp"
-                        android:layout_height="18dp"
+                        android:layout_height="22dp"
                         android:layout_marginStart="4dp"
                         android:contentDescription="User Profile"
                         android:scaleType="centerCrop"
@@ -73,7 +73,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
                         android:text="User name"
-                        android:textSize="11sp"
+                        android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="@+id/postUserProfile"
                         app:layout_constraintStart_toEndOf="@+id/postUserProfile" />
 
@@ -114,6 +114,7 @@
                     android:id="@+id/post_card_content"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:ems="10"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -123,6 +124,7 @@
                     android:id="@+id/postResGrid"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     app:columnCount="3"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -131,15 +133,27 @@
 
                 </androidx.gridlayout.widget.GridLayout>
 
+                <TextView
+                    android:id="@+id/textViewZanlist"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2pt"
+                    android:gravity="start"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/postResGrid" />
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/FootArea"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/postResGrid">
+                    app:layout_constraintTop_toBottomOf="@id/textViewZanlist">
 
                     <LinearLayout
+                        android:id="@+id/reply_number_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="24dp"
@@ -150,8 +164,8 @@
 
                         <ImageView
                             android:id="@+id/imageView5"
-                            android:layout_width="10dp"
-                            android:layout_height="10dp"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:layout_weight="1"
                             app:srcCompat="@drawable/comment"
                             app:tint="@color/green_400" />
@@ -163,7 +177,7 @@
                             android:layout_marginStart="5dp"
                             android:layout_weight="1"
                             android:text="TextView"
-                            android:textSize="10sp" />
+                            android:textSize="12sp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -176,8 +190,8 @@
 
                         <ImageView
                             android:id="@+id/imageView3"
-                            android:layout_width="10dp"
-                            android:layout_height="10dp"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:layout_marginStart="5dp"
                             android:layout_weight="1"
                             android:tintMode="src_in"
@@ -191,7 +205,7 @@
                             android:layout_marginStart="5dp"
                             android:layout_weight="1"
                             android:text="TextView"
-                            android:textSize="10sp" />
+                            android:textSize="12sp" />
                     </LinearLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

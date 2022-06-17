@@ -1,7 +1,9 @@
 package com.example.meiyou.fragment;
 
+import static com.example.meiyou.model.PostList.MODE_SINGLE_POST;
 import static com.example.meiyou.utils.GlobalData.FILE_TYPE_NONE;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,11 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.meiyou.activity.SinglePostActivity;
 import com.example.meiyou.component.PostViewAdapter;
 import com.example.meiyou.databinding.FragmentPostlistBinding;
 import com.example.meiyou.model.Post;
@@ -39,6 +44,7 @@ public class PostListFragment extends Fragment {
         mode = 4;
     }
 
+    private ActivityResultLauncher<Intent> activitySinglePostLauncher;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -47,9 +53,15 @@ public class PostListFragment extends Fragment {
         View view = binding.getRoot();
 
         RecyclerView mRecyclerView = binding.recycleView;
-        mAdapter = new PostViewAdapter(this.getContext());
+        mAdapter = new PostViewAdapter(this.getContext(), this.getViewLifecycleOwner());
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+
+        activitySinglePostLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+
+                });
 
         // on Post list get
         postListModel.status.observe(getViewLifecycleOwner(), status -> {
@@ -62,6 +74,9 @@ public class PostListFragment extends Fragment {
             }
 
             if(status == NetworkBasic.Status.success){
+                if(mode == MODE_SINGLE_POST )
+                    Log.d("SINGLE-POST", "netreturn: newstart="+postListModel.new_start
+                            +" end="+postListModel.len());
                 for(int i = postListModel.new_start; i< postListModel.len(); i++){
                     Post post = postListModel.get(i);
                     mAdapter.addPost(PostViewAdapter.PostInfo.fromPost(post));
@@ -71,7 +86,6 @@ public class PostListFragment extends Fragment {
                         GlobalResFileManager.requestFile(getViewLifecycleOwner(), post.profile_id, uri -> {
                             post.userProfileUri = uri;
                             mAdapter.notifyDataSetChanged();
-                            Log.d("Image", "onChanged: " + uri.toString());
                         });
                     }
 
@@ -96,6 +110,13 @@ public class PostListFragment extends Fragment {
         });
 
         mAdapter.setOnLoadMoreAction(() -> load());
+        if(mode!=MODE_SINGLE_POST)
+            mAdapter.setOnClickedPost(postInfo -> {
+                Intent intent = new Intent(getActivity(), SinglePostActivity.class);
+                Log.d("SINGLE-POST", "onCreateView: pid="+postInfo.getPost().pid);
+                intent.putExtra(SinglePostActivity.EXTRA_PID, String.valueOf(postInfo.getPost().pid));
+                activitySinglePostLauncher.launch(intent);
+            });
 
         refresh();
 
@@ -116,5 +137,12 @@ public class PostListFragment extends Fragment {
 
     public void setUserID(int user_id){
         postListModel.setFixUser(user_id);
+    }
+    public void setPostID(int post_id){
+        postListModel.setFixPid(post_id);
+    }
+
+    public void setOnClickedCard(PostViewAdapter.ClickedPostcardAction callback){
+        mAdapter.setOnClickedPost(callback);
     }
 }

@@ -70,7 +70,7 @@ public class DraftListFragment extends Fragment {
                 });
 
         RecyclerView mRecyclerView = binding.recycleViewDraft;
-        mAdapter = new PostViewAdapter(this.getContext());
+        mAdapter = new PostViewAdapter(this.getContext(), getViewLifecycleOwner());
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
 

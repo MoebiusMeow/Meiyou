@@ -1,9 +1,13 @@
 package com.example.meiyou.component;
 
+import static com.example.meiyou.model.Post.TYPE_HEAD_POST;
+import static com.example.meiyou.model.Post.TYPE_POST;
+import static com.example.meiyou.model.Post.TYPE_REPLY;
 import static com.example.meiyou.utils.GlobalData.FILE_TYPE_IMG;
 import static com.example.meiyou.utils.GlobalData.FILE_TYPE_NONE;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
@@ -13,14 +17,16 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.gridlayout.widget.GridLayout;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.meiyou.R;
 import com.example.meiyou.databinding.ComponentLoadmoreBinding;
 import com.example.meiyou.databinding.ComponentPostcardBinding;
-import com.example.meiyou.databinding.ComponentUploadProgressBinding;
 import com.example.meiyou.model.Post;
+import com.example.meiyou.utils.NetworkBasic;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -32,8 +38,9 @@ import java.util.LinkedList;
 //
 public class PostViewAdapter extends
         RecyclerView.Adapter<PostViewAdapter.PostCard>{
-    private final LinkedList<PostInfo> mPostList = new LinkedList<>();
+    private final LinkedList<PostInfo> postInfoList = new LinkedList<>();
     private final LayoutInflater mInflater;
+    private LifecycleOwner pLifecycle;
     public static final int MAX_TITLE_LEN = 20, MAX_CONTENT_LEN = 80;
     public static final int TYPE_POST_CARD = 0x01, TYPE_TAIL = 0x02, TYPE_EMPTY_TAIL = 0x03;
     public static final int STYLE_STANDARD = 0x01, STYLE_NOT_PUBLISHED = 0x02;
@@ -56,9 +63,10 @@ public class PostViewAdapter extends
 
     public void setOnClickedPost(ClickedPostcardAction action){ clickedPostcardAction = action; }
 
-    public PostViewAdapter(Context context) {
+    public PostViewAdapter(Context context, LifecycleOwner lifecycle) {
         mInflater = LayoutInflater.from(context);
-        mPostList.addLast(new PostInfo("点击加载更多...","", TYPE_TAIL));
+        postInfoList.addLast(new PostInfo("点击加载更多...","", TYPE_TAIL));
+        pLifecycle = lifecycle;
     }
 
 
@@ -173,6 +181,31 @@ public class PostViewAdapter extends
                 postCardBinding.textPostUsername.setVisibility(View.GONE);
                 postCardBinding.textPostID.setVisibility(View.GONE);
             }
+            if(postInfo.post.type != TYPE_HEAD_POST){
+                postCardBinding.textViewZanlist.setVisibility(View.GONE);
+            }
+            if(postInfo.post.type == TYPE_REPLY){
+                postCardBinding.postCardTitle.setVisibility(View.GONE);
+                postCardBinding.FootArea.setVisibility(View.GONE);
+            }
+            if(postInfo.post.type == TYPE_HEAD_POST){
+                postCardBinding.postCardTitle.setTextSize(24);
+                String dianzanDetail = postInfo.post.zanDetail;
+                postCardBinding.textViewZanlist.setText(dianzanDetail);
+                postCardBinding.replyNumberLayout.setVisibility(View.GONE);
+            }
+            if (postCardBinding.imageView3.getVisibility() == View.VISIBLE) {
+                setDianzan(postInfo.post.if_zan);
+                postCardBinding.imageView3.setOnClickListener(view -> {
+                    Log.d("w", "wrrrrrrrrrrrrrrrr");
+                    postInfo.post.set_dianzan(postInfo.post.if_zan ? 0 : 1);
+                });
+                postInfo.post.status.observe(pLifecycle, status -> {
+                    if (status == NetworkBasic.Status.success) {
+                        setDianzan(postInfo.post.if_zan);
+                    }
+                });
+            }
         }
 
         public void createAttachmentView(){
@@ -220,6 +253,14 @@ public class PostViewAdapter extends
             }
         }
 
+        public void setDianzan(boolean if_zan) {
+            if (if_zan) {
+                postCardBinding.imageView3.setImageTintList(parentContext.getColorStateList(R.color.pink_500));
+            } else {
+                postCardBinding.imageView3.setImageTintList(parentContext.getColorStateList(R.color.green_400));
+            }
+        }
+
         public void bindTailTitle(String title){
             if((mType == TYPE_EMPTY_TAIL || mType == TYPE_TAIL) && loadMoreBinding !=null ){
                 loadMoreBinding.loadMoreText.setText(title);
@@ -238,22 +279,23 @@ public class PostViewAdapter extends
     }
 
     public void clear(){
-        PostInfo mLastHolder = mPostList.getLast();
-        mPostList.clear();
-        mPostList.addLast(mLastHolder);
+        PostInfo mLastHolder = postInfoList.getLast();
+        postInfoList.clear();
+        postInfoList.addLast(mLastHolder);
         notifyDataSetChanged();
     }
 
     public void addPost(PostInfo newPost){
-        PostInfo mLastHolder = mPostList.getLast();
-        mPostList.removeLast();
-        mPostList.addLast(newPost);
-        mPostList.addLast(mLastHolder);
+        Log.d("TAG", "addPost: id="+newPost.getPost().pid);
+        PostInfo mLastHolder = postInfoList.getLast();
+        postInfoList.removeLast();
+        postInfoList.addLast(newPost);
+        postInfoList.addLast(mLastHolder);
         notifyDataSetChanged();
     }
 
     public void changeTail(boolean ifNoMore){
-        PostInfo mLastHolder = mPostList.getLast();
+        PostInfo mLastHolder = postInfoList.getLast();
         if(ifNoMore){
             mLastHolder.setType(TYPE_EMPTY_TAIL);
             mLastHolder.setTitle("没有更多内容了哦~");
@@ -267,7 +309,7 @@ public class PostViewAdapter extends
 
     @Override
     public int getItemViewType(int position){
-        return mPostList.get(position).getType();
+        return postInfoList.get(position).getType();
     }
 
     @NotNull
@@ -288,7 +330,7 @@ public class PostViewAdapter extends
 
     @Override
     public void onBindViewHolder(@NonNull PostCard holder, int position) {
-        PostInfo postInfo = mPostList.get(position);
+        PostInfo postInfo = postInfoList.get(position);
         if(holder.mType == TYPE_POST_CARD) {
             holder.bindPostInfo(postInfo);
         }
@@ -301,7 +343,7 @@ public class PostViewAdapter extends
 
     @Override
     public int getItemCount() {
-        return mPostList.size();
+        return postInfoList.size();
     }
 
 }
