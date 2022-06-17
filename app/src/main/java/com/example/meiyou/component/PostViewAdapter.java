@@ -59,7 +59,12 @@ public class PostViewAdapter extends
 
     private LoadMoreAction loadMoreAction = () -> { };
     private ClickedPostcardAction clickedPostcardAction = postInfo -> {
-        Log.d("PostInfo", ": res_id="+postInfo.post.res_ids);
+        Log.d("PostInfo", ": uid="+postInfo.post.uid+" global uid="
+                + GlobalData.getUser().uid);
+    };
+    private ClickedDeleteAction clickedDeleteAction = postInfo -> {
+        Log.d("PostInfo", ": uid="+postInfo.post.uid+" global uid="
+                + GlobalData.getUser().uid);
     };
 
     public void setOnLoadMoreAction(LoadMoreAction action){
@@ -67,6 +72,8 @@ public class PostViewAdapter extends
     }
 
     public void setOnClickedPost(ClickedPostcardAction action){ clickedPostcardAction = action; }
+
+    public void setOnClickedDelete(ClickedDeleteAction action){ clickedDeleteAction = action; }
 
     public PostViewAdapter(Context context, LifecycleOwner lifecycle) {
         mInflater = LayoutInflater.from(context);
@@ -212,6 +219,10 @@ public class PostViewAdapter extends
             }
             if (postInfo.post.uid == GlobalData.getUser().uid){
                 postCardBinding.layoutToDelete.setVisibility(View.VISIBLE);
+                postCardBinding.layoutToDelete.setOnClickListener(view -> {
+                    Log.d("TAG", "bindPostInfo: Clicked!!!");
+                    clickedDeleteAction.Onclick(postInfo);
+                });
             }
             else{
                 postCardBinding.layoutToDelete.setVisibility(View.INVISIBLE);

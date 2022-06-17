@@ -120,4 +120,21 @@ public class Post extends NetworkBasic implements Serializable {
                 }
         ));
     }
+
+    public void request_remove(){
+        status.postValue(Status.idle);
+        String url = type == TYPE_REPLY? NetworkConstant.removeReplyUrl
+                : NetworkConstant.removePostUrl;
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder()
+                .addQueryParameter(type == TYPE_REPLY? "rid":"pid", String.valueOf(pid));
+        NetworkConstant.get(urlBuilder.build().toString(), true, getCommonNetworkCallback(
+                response -> {
+                    if (response.code() != 200) {
+                        status.postValue(Status.wrong);
+                        return;
+                    }
+                    status.postValue(Status.success);
+                }
+        ));
+    }
 }
