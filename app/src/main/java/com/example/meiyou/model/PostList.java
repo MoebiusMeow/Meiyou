@@ -28,7 +28,8 @@ public class PostList extends NetworkBasic {
     public int nLastGet = 0;
     public int new_start = 0;
 
-    public static final int MODE_NEWEST = 0, MODE_HOT = 1, MODE_FOLLOW = 2;
+    public static final int MODE_NEWEST = 0, MODE_HOT = 1, MODE_FOLLOW = 2, MODE_USER_FIX = 4;
+    private int fix_user = 0;
 
     public int len(){
         return postList.size();
@@ -39,19 +40,22 @@ public class PostList extends NetworkBasic {
     public void clear(){
         postList.clear();
     }
+    public void setFixUser(int user){fix_user = user;}
 
+    /* n:       how many posts pull from server
+       mode:    order and filter of posts
+       refresh: if request from start and clear all pulled posts
+     */
     public void pull_post(int n, int mode, boolean refresh){
         HttpUrl.Builder urlBuilder = HttpUrl.parse(NetworkConstant.getMultiplePostUrl).newBuilder()
             .addQueryParameter("n", String.valueOf(n));
         if(len() > 0 && !refresh){
             urlBuilder.addQueryParameter("start", String.valueOf(postList.get(len()-1).pid -1));
         }
-        switch (mode){
-            case MODE_NEWEST:   urlBuilder.addQueryParameter("order", "new"); break;
-            case MODE_HOT:      urlBuilder.addQueryParameter("order", "hot"); break;
-            case MODE_FOLLOW:   urlBuilder.addQueryParameter("order", "followednew");
-                break;
-        }
+        if((MODE_NEWEST & mode) !=0)  urlBuilder.addQueryParameter("order", "new");
+        if((MODE_HOT & mode) !=0)     urlBuilder.addQueryParameter("order", "hot");
+        if((MODE_FOLLOW & mode) !=0)  urlBuilder.addQueryParameter("filter", "follow");
+        if((MODE_USER_FIX & mode) !=0)urlBuilder.addQueryParameter("filter", String.valueOf(fix_user));
         HttpUrl url = urlBuilder.build();
         NetworkConstant.get(url.toString(), true, getCommonNetworkCallback(
             response -> {

@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.EditUserInfoActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout6"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/pink_500"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/buttonReturn2"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="8dp"
+            android:background="#00FFFFFF"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/arrow_left"
+            app:tint="@color/white" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout6">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/notifyUsername2"
+                android:layout_width="92dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="8dp"
+                android:text="用户名"
+                android:textColor="@color/red_0"
+                android:textSize="12sp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@+id/editTextNumber"
+                app:layout_constraintStart_toEndOf="@+id/editTextTextPersonUsername"
+                app:layout_constraintTop_toTopOf="@+id/editTextTextPersonUsername" />
+
+            <TextView
+                android:id="@+id/notifySignature"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:text="用户名"
+                android:textColor="@color/red_0"
+                android:textSize="12sp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@+id/editTextNumber"
+                app:layout_constraintEnd_toEndOf="@+id/editTextTextSignature"
+                app:layout_constraintStart_toStartOf="@+id/editTextTextSignature"
+                app:layout_constraintTop_toBottomOf="@+id/editTextTextSignature" />
+
+            <ImageButton
+                android:id="@+id/imageButtonProfile"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginTop="24dp"
+                android:background="#00FFFFFF"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <EditText
+                android:id="@+id/editTextTextPersonUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="YourName"
+                app:layout_constraintEnd_toEndOf="@+id/imageButtonProfile"
+                app:layout_constraintStart_toStartOf="@+id/imageButtonProfile"
+                app:layout_constraintTop_toBottomOf="@+id/textShowMail" />
+
+            <EditText
+                android:id="@+id/editTextTextSignature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:minLines="3"
+                android:text="Description"
+                app:layout_constraintEnd_toEndOf="@+id/imageButtonProfile"
+                app:layout_constraintStart_toStartOf="@+id/imageButtonProfile"
+                app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonUsername" />
+
+            <TextView
+                android:id="@+id/textShowMail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="dcy11011@foxmail.com"
+                app:layout_constraintEnd_toEndOf="@+id/imageButtonProfile"
+                app:layout_constraintStart_toStartOf="@+id/imageButtonProfile"
+                app:layout_constraintTop_toBottomOf="@+id/imageButtonProfile" />
+
+            <Button
+                android:id="@+id/buttonStartEditPasswd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00FFFFFF"
+                android:backgroundTint="#00FFFFFF"
+                android:minWidth="40dp"
+                android:minHeight="40dp"
+                android:text="修改密码"
+                android:textColor="@color/pink_600"
+                app:layout_constraintEnd_toEndOf="@+id/imageButtonProfile"
+                app:layout_constraintStart_toStartOf="@+id/imageButtonProfile"
+                app:layout_constraintTop_toBottomOf="@+id/notifySignature" />
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="绑定邮箱"
+                app:layout_constraintBottom_toBottomOf="@+id/textShowMail"
+                app:layout_constraintEnd_toStartOf="@+id/textShowMail" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout7"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginTop="32dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.497"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/buttonStartEditPasswd">
+
+                <Button
+                    android:id="@+id/buttonCancelEditUser"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="32dp"
+                    android:backgroundTint="@color/gray_100"
+                    android:text="取消"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/buttonConfirmEditUser"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/buttonConfirmEditUser"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/pink_600"
+                    android:text="确认修改"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:id="@+id/viewMask"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="#66000000"
+                app:layout_constraintBottom_toBottomOf="@+id/imageButtonProfile"
+                app:layout_constraintEnd_toEndOf="@+id/imageButtonProfile"
+                app:layout_constraintStart_toStartOf="@+id/imageButtonProfile"
+                app:layout_constraintTop_toTopOf="@+id/imageButtonProfile" />
+
+            <ProgressBar
+                android:id="@+id/progressBarUserProfile"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminateTint="@color/pink_200"
+                app:layout_constraintBottom_toBottomOf="@+id/imageButtonProfile"
+                app:layout_constraintEnd_toEndOf="@+id/imageButtonProfile"
+                app:layout_constraintStart_toStartOf="@+id/imageButtonProfile"
+                app:layout_constraintTop_toTopOf="@+id/imageButtonProfile" />
+
+            <ProgressBar
+                android:id="@+id/progressBarSubmitEdit"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:indeterminateTint="@color/pink_500"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@+id/constraintLayout7"
+                app:layout_constraintStart_toEndOf="@+id/constraintLayout7"
+                app:layout_constraintTop_toTopOf="@+id/constraintLayout7" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

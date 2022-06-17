@@ -97,39 +97,22 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        binding.editTextNumber.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                binding.notifyCode.setVisibility(View.INVISIBLE);
-            }
+        binding.editTextNumber.setOnFocusChangeListener((view, b) -> binding.notifyCode.setVisibility(View.INVISIBLE));
+
+        usernameText.setOnFocusChangeListener((view, b) -> {
+            if(!b) verifyUsername();
         });
 
-        usernameText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if(!b) verifyUsername();
-            }
-        });
-
-        mailText.setOnFocusChangeListener(new View.OnFocusChangeListener(){
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if(!b) verifyEmail();
-            }
+        mailText.setOnFocusChangeListener((view, b) -> {
+            if(!b) verifyEmail();
         });
         
-        passwordText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if(!b) verifyPassword();
-            }
+        passwordText.setOnFocusChangeListener((view, b) -> {
+            if(!b) verifyPassword();
         });
 
-        passwordTextRepeat.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if(!b) verifyPasswordRepeat();
-            }
+        passwordTextRepeat.setOnFocusChangeListener((view, b) -> {
+            if(!b) verifyPasswordRepeat();
         });
 
 
@@ -177,7 +160,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private boolean verifyPasswordRepeat(){
         if( !passwordText.getText().toString().equals( passwordTextRepeat.getText().toString() )) {
-            binding.notifyPassword.setText("两次输入不一致");
+            binding.notifyRepeatWrong.setText("两次输入不一致");
             binding.notifyRepeatWrong.setVisibility(View.VISIBLE);
             return false;
         }
@@ -190,7 +173,7 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean verifyUsername(){
         int len = usernameText.getText().toString().length();
         if(len<2 || len >10){
-            binding.notifyUsername.setText("用户名长度应为6到18位");
+            binding.notifyUsername.setText("用户名长度应为2到10位");
             binding.notifyUsername.setVisibility(View.VISIBLE);
             return false;
         }

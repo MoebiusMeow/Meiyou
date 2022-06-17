@@ -72,12 +72,7 @@ public class PostListFragment extends Fragment {
             }
         });
 
-        mAdapter.setOnLoadMoreAction(new PostViewAdapter.LoadMoreAction() {
-            @Override
-            public void Onclick() {
-                load();
-            }
-        });
+        mAdapter.setOnLoadMoreAction(() -> load());
 
         fresh();
 

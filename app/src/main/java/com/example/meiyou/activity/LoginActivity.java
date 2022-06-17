@@ -31,6 +31,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText usernameEditText, passwordEditText;
     private ActivityResultLauncher<Intent> activityResultLauncher;
 
+    public static final String EXTRA_USERNAME = "com.example.Meiyou.login.startusername";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +51,10 @@ public class LoginActivity extends AppCompatActivity {
         loadingProgressBar = binding.loading;
 
         usernameEditText.setText("dcy11011");
-        passwordEditText.setText("dcy1016");
+        passwordEditText.setText("111111"); // NOTE: change these into:
+        // passwordEditText.setText("");
+        // String username = getIntent().getStringExtra(EXTRA_USERNAME);
+        // if(username != null) usernameEditText.setText(username);
 
         passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override

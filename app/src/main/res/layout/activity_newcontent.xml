@@ -73,16 +73,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/areaUploadStatus"
+            <LinearLayout
+                android:id="@+id/areaUploadFile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout"></LinearLayout>
 
             <EditText
                 android:id="@+id/editTextContent"
@@ -121,10 +121,13 @@
                 android:id="@+id/divider2"
                 android:layout_width="415dp"
                 android:layout_height="1dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
                 android:background="?android:attr/listDivider"
-                app:layout_constraintTop_toBottomOf="@+id/editTextContent"
-                tools:layout_editor_absoluteX="1dp" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/editTextContent" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout"
@@ -191,7 +194,7 @@
     </ScrollView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/mask"
+        android:id="@+id/postMask"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#7E000000"

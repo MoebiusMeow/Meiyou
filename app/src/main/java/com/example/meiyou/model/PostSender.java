@@ -1,5 +1,7 @@
 package com.example.meiyou.model;
 
+import android.util.Log;
+
 import com.example.meiyou.utils.GlobalData;
 import com.example.meiyou.utils.NetworkBasic;
 import com.example.meiyou.utils.NetworkConstant;
@@ -40,6 +42,12 @@ public class PostSender extends NetworkBasic {
                 getCommonNetworkCallback(response -> {
                     if(response.code() != 200){
                         status.postValue(Status.wrong);
+                        JSONObject jsonObject = new JSONObject(
+                                Objects.requireNonNull(response.body()).string());
+                        int id = jsonObject.getInt("id");
+                        Log.d("TAG", "send_post [wrong]: id="+id+"  message="
+                                +jsonObject.getString("message"));
+                        return;
                     }
                     JSONObject jsonObject = new JSONObject(
                             Objects.requireNonNull(response.body()).string());

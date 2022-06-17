@@ -21,7 +21,7 @@ public class GlobalResFileManager extends Activity {
     public interface ResFileCallback{
         public void onDone(Uri uri);
     }
-    public static void requestFile(LifecycleOwner lifecycleOwner, int res_id, ResFileCallback callback){
+    public static synchronized void requestFile(LifecycleOwner lifecycleOwner, int res_id, ResFileCallback callback){
         if(resFileDict.containsKey(res_id)){
             if(resFileDict.get(res_id).getValue() != null)
                 callback.onDone(resFileDict.get(res_id).getValue());

@@ -7,6 +7,7 @@ import android.content.res.ColorStateList;
 import android.os.Environment;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.meiyou.control.RegisterControl;
 import com.example.meiyou.model.DraftList;
@@ -27,16 +28,23 @@ public class GlobalData extends Application {
     public static final int FILE_TYPE_VID   = 20;
     public static final int FILE_TYPE_AUD   = 30;
 
+
     public static DraftList draftList;
 
 
+    // Used to notify main activity to switch to post list fragment when new post send
+    public static MutableLiveData<Integer> sig_post = new MutableLiveData<>();
+    public static final Integer SIG_POST_SEND = 1, SIG_POST_NOTHING = 0;
+
+    public static MutableLiveData<Integer> sig_fresh = new MutableLiveData<>();
+    public static final Integer SIG_FRESH_DO = 1, SIG_FRESH_IDLE = 0;
 
 
     @Override
     public void onCreate(){
         super.onCreate();
         context=getApplicationContext();
-        draftList = new DraftList(new File(getFilesDir(), "/drafts.data"));
+        draftList = new DraftList(new File(getFilesDir(), "drafts.data"));
     }
     public static Context getContext(){return context;}
     public static MainUser getUser(){

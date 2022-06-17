@@ -21,6 +21,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
+import androidx.gridlayout.widget.GridLayout;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
@@ -50,12 +51,13 @@ public class NewContentActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> activityImageSelectLauncher,
         activityVideoSelectLauncher, activityAudioSelectLauncher;
 
-    LinearLayout uploadListLayout ;
+    GridLayout uploadListLayout ;
 
     private Integer attachedFiletype = null;
 
     private final ArrayList<Integer> resIDList = new ArrayList<>();
     private final ArrayList<Uri> fileUriList = new ArrayList<>();
+    private final ArrayList<UploadView> uploadViews = new ArrayList<>();
     private static int currentIntentType = -1;
     private static final int TYPE_CAMERA = 0, TYPE_FILE = 1;
     Uri imageUri = null;
@@ -64,7 +66,8 @@ public class NewContentActivity extends AppCompatActivity {
 
     public static final String ACTION_TYPE = "com.Meiyou.newContent.actionType",
         POST_DATA = "com.Meiyou.newContent.postData",
-        POST_ID = "com.Meiyou.newContent.postID";
+        POST_ID = "com.Meiyou.newContent.postID",
+        POST_SAVED = "com.Meiyou.newContent.postSaved";
     public static final int ACTION_SAVE = 0, ACTION_POST = 1;
 
 
@@ -72,13 +75,22 @@ public class NewContentActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Objects.requireNonNull(getSupportActionBar()).hide();
         binding  = ActivityNewcontentBinding.inflate(getLayoutInflater());
+
+        // Get Intent message
+        Post post = (Post) getIntent().getSerializableExtra(POST_SAVED);
+        if(post != null){
+            binding.editTextTitle.setText(post.title);
+            binding.editTextContent.setText(post.content);
+        }
+
+        Objects.requireNonNull(getSupportActionBar()).hide();
         setContentView(binding.getRoot());
 
-        uploadListLayout = new LinearLayout(this);
-        uploadListLayout.setOrientation(LinearLayout.VERTICAL);
-        binding.areaUploadStatus.addView(uploadListLayout);
+        uploadListLayout = new GridLayout(this);
+        uploadListLayout.setColumnCount(3);
+        uploadListLayout.setRowCount(3);
+        binding.areaUploadFile.addView(uploadListLayout);
 
         setCurrentFileType(SET_EMPTY);
 
@@ -264,10 +276,10 @@ public class NewContentActivity extends AppCompatActivity {
         });
 
         binding.buttonRelease.setOnClickListener( view -> {
-            binding.mask.setVisibility(View.VISIBLE);
+            binding.postMask.setVisibility(View.VISIBLE);
             PostSender postSender = new PostSender(buildPost());
             postSender.status.observe(this, status -> {
-                binding.mask.setVisibility(View.INVISIBLE);
+                binding.postMask.setVisibility(View.INVISIBLE);
                 if(status == NetworkBasic.Status.success){
                     Intent intent = new Intent();
                     intent.putExtra(ACTION_TYPE, ACTION_POST);
@@ -339,8 +351,14 @@ public class NewContentActivity extends AppCompatActivity {
         UploadView uploadView = new UploadView(this, this);
         uploadView.setName(fileNameDisplay);
         uploadView.setImageUri(uri);
+        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+        params.width = 0;
+        params.rowSpec = GridLayout.spec((int)(nSelected/3),1,1f);
+        params.columnSpec = GridLayout.spec((int)(nSelected%3),1,1f);
+        params.setMargins(2,2,2,2);
+        uploadListLayout.addView(uploadView, params);
+        uploadViews.add(uploadView);
         nSelected ++;
-        uploadListLayout.addView(uploadView);
 
         // Bind upload finish callback
         fileUploader.status.observe(this, status -> {
@@ -388,6 +406,7 @@ public class NewContentActivity extends AppCompatActivity {
         post.title = binding.editTextTitle.getText().toString();
         post.content = binding.editTextContent.getText().toString();
         post.res_type = attachedFiletype;
+        Log.d("TAG", "buildPost: res_type="+post.res_type);
         if(attachedFiletype != GlobalData.FILE_TYPE_NONE && attachedFiletype != GlobalData.FILE_TYPE_NONE){
             post.res_ids = (ArrayList<Integer>) resIDList.clone();
         }

@@ -14,9 +14,8 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 
 /* Hold MainUser data and handle some user related http request*/
-public class MainUser extends NetworkBasic {
-    public String username = "", signature = "";
-    public String email = "";
+public class MainUser extends User {
+
     private String token = "";
 
     public String getToken(){
@@ -47,6 +46,8 @@ public class MainUser extends NetworkBasic {
                     }
                     JSONObject jsonObject = new JSONObject(response.body().string());
                     token = jsonObject.getString("token");
+                    uid = jsonObject.getInt("uid");
+                    Log.d("TAG", "login: success");
                     status.postValue(Status.success);
                 }
         ));
@@ -75,6 +76,58 @@ public class MainUser extends NetworkBasic {
                 }
         ));
     }
+
+
+    public void updateInfo(User newInfo){
+        status.postValue(Status.idle);
+        RequestBody body = new FormBody.Builder()
+                .add("username", newInfo.username)
+                .add("signature", newInfo.signature)
+                .add("profile", String.valueOf(newInfo.profile_id))
+                .build();
+        Log.d("TAG", "updateInfo: profileID = "+newInfo.profile_id);
+        NetworkConstant.post(NetworkConstant.setUserInfoUrl, body, true, getCommonNetworkCallback(
+                response -> {
+                    JSONObject jsonObject = new JSONObject(response.body().string());
+                    if (response.code() != 200) {
+                        status.postValue(Status.wrong);
+                        //errorCode = jsonObject.getInt("id");
+                        Log.d("NETDCT", "onResponse: " + jsonObject.getString("message"));
+                        return;
+                    }
+                    Log.d("TAG", "updatePassword: updateInfo success");
+                    status.postValue(Status.success);
+                }
+        ));
+    }
+
+    public void updatePassword(String old_password, String new_password){
+        Log.d("TAG", "updatePassword: status set to idel start");
+        status.postValue(Status.idle);
+        Log.d("TAG", "updatePassword: status set to idel");
+        RequestBody body = new FormBody.Builder()
+                .add("old", getMD5(old_password))
+                .add("new", getMD5(new_password))
+                .build();
+        NetworkConstant.post(NetworkConstant.setPasswordUrl, body, true, getCommonNetworkCallback(
+                response -> {
+                    JSONObject jsonObject = new JSONObject(response.body().string());
+                    if (response.code() != 200) {
+                        status.postValue(Status.wrong);
+                        if(response.code() == 400)
+                            errorCode = jsonObject.getInt("id");
+                        else
+                            errorCode = 2;
+                        Log.d("NETDCT", "onResponse: " + jsonObject.getString("message"));
+                        return;
+                    }
+                    Log.d("TAG", "updatePassword: change passwd success");
+                    errorCode = 8977787;
+                    status.postValue(Status.success);
+                }
+        ));
+    }
+
 
     public static String getMD5(String info) {
         try {

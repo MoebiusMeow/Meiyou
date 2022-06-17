@@ -6,13 +6,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.meiyou.R;
+import com.example.meiyou.databinding.ComponentLoadmoreBinding;
+import com.example.meiyou.databinding.ComponentPostcardBinding;
+import com.example.meiyou.databinding.ComponentUploadProgressBinding;
 import com.example.meiyou.model.Post;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,16 +29,23 @@ public class PostViewAdapter extends
     private final LayoutInflater mInflater;
     public static final int MAX_TITLE_LEN = 20, MAX_CONTENT_LEN = 80;
     public static final int TYPE_POST_CARD = 0x01, TYPE_TAIL = 0x02, TYPE_EMPTY_TAIL = 0x03;
+    public static final int STYLE_STANDARD = 0x01, STYLE_NOT_PUBLISHED = 0x02;
 
     public interface LoadMoreAction{
         void Onclick();
     }
+    public interface ClickedPostcardAction{
+        void Onclick(PostInfo postInfo);
+    }
 
     private LoadMoreAction loadMoreAction = () -> { };
+    private ClickedPostcardAction clickedPostcardAction = postInfo -> { };
 
     public void setOnLoadMoreAction(LoadMoreAction action){
         loadMoreAction = action;
     }
+
+    public void setOnClickedPost(ClickedPostcardAction action){ clickedPostcardAction = action; }
 
     public PostViewAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
@@ -50,6 +58,7 @@ public class PostViewAdapter extends
     public static class PostInfo{
         private final Post post;
         private int type = TYPE_POST_CARD;
+        private int style = STYLE_STANDARD;
 
         public static PostInfo fromPost(Post post){
             return new PostInfo(post);
@@ -68,12 +77,17 @@ public class PostViewAdapter extends
         public String getTitle(){ return post.title; }
         public String getContent(){ return post.content; }
         public int getType(){return type;}
+        public Post getPost(){return post;}
 
         public void setTitle(String mTitle){
             this.post.title = mTitle.substring(0, Math.min(MAX_TITLE_LEN, mTitle.length()));
             if(mTitle.length()>MAX_TITLE_LEN){
                 this.post.title = this.post.title.concat("...");
             }
+        }
+
+        public void setStyle(int style){
+            this.style = style;
         }
 
         public void setContent(String mContent){
@@ -99,52 +113,58 @@ public class PostViewAdapter extends
     class PostCard extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
-        public final TextView titleView,contentView,loadMoreView, usernameView, datetimeView,
-                pidView, zanView, commentView;
-        public final ImageView userProfileView;
+        public ComponentPostcardBinding postCardBinding = null;
+
+        public ComponentLoadmoreBinding loadMoreBinding = null;
+
         final PostViewAdapter mAdapter;
         private final int mType;
+        private PostInfo postInfo;
 
         public static final String TAG_LOG = "PostViewAdapter";
 
         public PostCard(View itemView, PostViewAdapter adapter, int _type) {
             super(itemView);
-            TextView contentView1, titleView1, loadMoreView1, usernameView1, datetimeView1,
-                    pidView1, zanView1, commentView1;
-            ImageView userProfileView1 = null;
+            if(_type == TYPE_POST_CARD)
+                postCardBinding = ComponentPostcardBinding.bind(itemView);
+            if(_type == TYPE_EMPTY_TAIL || _type == TYPE_TAIL)
+                loadMoreBinding = ComponentLoadmoreBinding.bind(itemView);
             mType = _type;
-            usernameView1 = titleView1 = contentView1 = loadMoreView1 = null;
-            datetimeView1 = pidView1 = zanView1 = commentView1 = null;
-            if(mType == TYPE_POST_CARD) {
-                titleView1 = itemView.findViewById(R.id.post_card_title);
-                contentView1 = itemView.findViewById(R.id.post_card_content);
-                usernameView1 = itemView.findViewById(R.id.textPostUsername);
-                datetimeView1 = itemView.findViewById(R.id.textDateTime);
-                pidView1 = itemView.findViewById(R.id.textPostID);
-                zanView1 = itemView.findViewById(R.id.textNZan);
-                commentView1 = itemView.findViewById(R.id.textNReply);
-                userProfileView1 = itemView.findViewById(R.id.postUserProfile);
-            }
-            else if(mType == TYPE_TAIL || mType == TYPE_EMPTY_TAIL){
-                loadMoreView1 = itemView.findViewById(R.id.loadMoreText);
-            }
-            else{
-                Log.d(TAG_LOG, "Unexpected type");
-            }
-            contentView = contentView1;
-            titleView = titleView1;
-            loadMoreView = loadMoreView1;
-            usernameView = usernameView1;
-            datetimeView = datetimeView1;
-            pidView = pidView1;
-            zanView = zanView1;
-            commentView = commentView1;
-            userProfileView = userProfileView1;
             this.mAdapter = adapter;
             itemView.setOnClickListener(this);
         }
 
+        public void bindPostInfo(PostInfo postInfo){
+            this.postInfo = postInfo;
+            if(mType == TYPE_POST_CARD && postCardBinding !=null) {
+                postCardBinding.postCardTitle.setText(postInfo.getTitle());
+                postCardBinding.postCardContent.setText(postInfo.getContent());
+                postCardBinding.textPostID.setText(postInfo.getPostIDString());
+                postCardBinding.textNReply.setText(String.valueOf(postInfo.post.n_reply));
+                postCardBinding.textNZan.setText(String.valueOf(postInfo.post.n_dianzan));
+                postCardBinding.textPostUsername.setText(postInfo.post.username);
+                postCardBinding.textDateTime.setText(postInfo.post.datetime);
+                if (postInfo.post.userProfileUri == null) {
+                    postCardBinding.postUserProfile.setImageResource(R.drawable.user_profile_default);
+                } else {
+                    Log.d("TAG", "bindPostInfo: bind post profile"+postInfo.post.userProfileUri.getPath());
+                    Drawable drawable = Drawable.createFromPath(postInfo.post.userProfileUri.getPath());
+                    postCardBinding.postUserProfile.setImageDrawable(drawable);
+                }
+            }
+            if(postInfo.style == STYLE_NOT_PUBLISHED) {
+                postCardBinding.FootArea.setVisibility(View.GONE);
+                postCardBinding.postUserProfile.setVisibility(View.GONE);
+                postCardBinding.textPostUsername.setVisibility(View.GONE);
+                postCardBinding.textPostID.setVisibility(View.GONE);
+            }
+        }
 
+        public void bindTailTitle(String title){
+            if((mType == TYPE_EMPTY_TAIL || mType == TYPE_TAIL) && loadMoreBinding !=null ){
+                loadMoreBinding.loadMoreText.setText(title);
+            }
+        }
 
         @Override
         public void onClick(View view) {
@@ -152,7 +172,7 @@ public class PostViewAdapter extends
                 loadMoreAction.Onclick();
             }
             else{
-                Log.d(TAG_LOG, "onClick: ViewHolder");
+                clickedPostcardAction.Onclick(this.postInfo);
             }
         }
     }
@@ -209,24 +229,10 @@ public class PostViewAdapter extends
     public void onBindViewHolder(@NonNull PostCard holder, int position) {
         PostInfo postInfo = mPostList.get(position);
         if(holder.mType == TYPE_POST_CARD) {
-            holder.titleView.setText(postInfo.getTitle());
-            holder.contentView.setText(postInfo.getContent());
-            holder.pidView.setText(postInfo.getPostIDString());
-            holder.commentView.setText(String.valueOf(postInfo.post.n_reply));
-            holder.zanView.setText(String.valueOf(postInfo.post.n_dianzan));
-            holder.usernameView.setText(postInfo.post.username);
-            holder.datetimeView.setText(postInfo.post.datetime);
-            if(postInfo.post.userProfileUri == null){
-                holder.userProfileView.setImageResource(R.drawable.user_profile_default);
-            }
-            else{
-                Drawable drawable = Drawable.createFromPath(postInfo.post.userProfileUri.getPath());
-                holder.userProfileView.setImageDrawable(drawable);
-                Log.d("Image", "set");
-            }
+            holder.bindPostInfo(postInfo);
         }
         else if(holder.mType == TYPE_TAIL || holder.mType == TYPE_EMPTY_TAIL){
-            holder.loadMoreView.setText(postInfo.getTitle());
+            holder.bindTailTitle(postInfo.getTitle());
         }
     }
 
