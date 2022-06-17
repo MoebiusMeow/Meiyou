@@ -406,6 +406,7 @@ public class NewContentActivity extends AppCompatActivity {
         post.title = binding.editTextTitle.getText().toString();
         post.content = binding.editTextContent.getText().toString();
         post.res_type = attachedFiletype;
+        post.uid = GlobalData.getUser().uid;
         Log.d("TAG", "buildPost: res_type="+post.res_type);
         if(attachedFiletype != GlobalData.FILE_TYPE_NONE && attachedFiletype != GlobalData.FILE_TYPE_NONE){
             post.res_ids = (ArrayList<Integer>) resIDList.clone();

@@ -93,6 +93,7 @@ public class PostListFragment extends Fragment {
                     if(post.res_type != FILE_TYPE_NONE){
                         ArrayList<Integer> res_ids = post.res_ids;
                         post.res_uri_list.clear();
+
                         for(int res_id:res_ids) post.res_uri_list.add(null);
                         for (int j=0; j<post.res_ids.size(); j++) {
                             int res_id = res_ids.get(j);

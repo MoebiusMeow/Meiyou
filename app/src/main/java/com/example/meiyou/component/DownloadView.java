@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.text.TextPaint;
 import android.util.AttributeSet;
@@ -13,7 +14,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.ProgressBar;
+import android.widget.VideoView;
 
 import androidx.annotation.DrawableRes;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -28,6 +31,7 @@ public class DownloadView extends ConstraintLayout {
     private ConstraintLayout mask;
     private ProgressBar progressBar;
     private ImageView imageView;
+    private VideoView videoView;
 
     public DownloadView(Context context) {
         super(context);
@@ -49,11 +53,44 @@ public class DownloadView extends ConstraintLayout {
         mask = findViewById(R.id.downloadMask);
         progressBar = findViewById(R.id.progressBarDownload);
         imageView = findViewById(R.id.imageViewDownload);
+        videoView = findViewById(R.id.videoViewDownload);
     }
 
     public void setImageUri(Uri uri) {
+        imageView.setVisibility(VISIBLE);
         imageView.setImageURI(uri);
+        videoView.setVisibility(GONE);
         Log.d("TAG", "setImageUri: Set!");
+    }
+
+    public void setVideoUri(Uri uri) {
+        videoView.setVisibility(VISIBLE);
+        imageView.setVisibility(GONE);
+        mask.setVisibility(VISIBLE);
+        progressBar.setVisibility(VISIBLE);
+        videoView.setOnPreparedListener(mediaPlayer -> {
+            hideMask();
+        });
+        /*videoView.setOnClickListener(view -> {
+            if (videoView.getDuration() == 0)
+                return;
+            if (videoView.isPlaying()) {
+                videoView.pause();
+            } else {
+                videoView.start();
+                Log.d("TAG", "start video");
+            }
+        });*/
+        videoView.setVideoURI(uri);
+
+        MediaController controller = new MediaController(this.getContext());
+        videoView.setMediaController(controller);
+        controller.setAnchorView(this);
+        controller.setMediaPlayer(videoView);
+
+        videoView.start();
+        videoView.requestFocus();
+        Log.d("TAG", "setVideoUri: Set!" + uri.toString());
     }
 
     public void setImageDrawable(Drawable drawable){

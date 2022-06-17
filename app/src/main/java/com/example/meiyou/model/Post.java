@@ -24,6 +24,7 @@ import okhttp3.HttpUrl;
 
 public class Post extends NetworkBasic implements Serializable {
     public int pid;
+    public int uid;
     public String title = "";
     public String content = "";
     public int res_type = FILE_TYPE_NONE;
@@ -66,6 +67,7 @@ public class Post extends NetworkBasic implements Serializable {
 
         this.content = postObj.getString("content");
         this.username = postObj.getString("username");
+        this.uid = postObj.getInt("uid");
         this.datetime = postObj.getString("datetime");
 
         String post_id_str = postObj.getString("resids");
@@ -111,7 +113,9 @@ public class Post extends NetworkBasic implements Serializable {
                         return;
                     }
                     JSONObject jsonObject = new JSONObject(response.body().string());
-                    if_zan = jsonObject.getBoolean("ifzan");
+                    this.if_zan = jsonObject.getBoolean("if_zan");
+                    this.n_dianzan = jsonObject.getInt("dianzan");
+                    this.zanDetail = jsonObject.getString("dianzandetail");
                     status.postValue(Status.success);
                 }
         ));

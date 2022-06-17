@@ -5,6 +5,7 @@ import static com.example.meiyou.model.Post.TYPE_POST;
 import static com.example.meiyou.model.Post.TYPE_REPLY;
 import static com.example.meiyou.utils.GlobalData.FILE_TYPE_IMG;
 import static com.example.meiyou.utils.GlobalData.FILE_TYPE_NONE;
+import static com.example.meiyou.utils.GlobalData.FILE_TYPE_VID;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -26,6 +27,7 @@ import com.example.meiyou.R;
 import com.example.meiyou.databinding.ComponentLoadmoreBinding;
 import com.example.meiyou.databinding.ComponentPostcardBinding;
 import com.example.meiyou.model.Post;
+import com.example.meiyou.utils.GlobalData;
 import com.example.meiyou.utils.NetworkBasic;
 
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +51,9 @@ public class PostViewAdapter extends
         void Onclick();
     }
     public interface ClickedPostcardAction{
+        void Onclick(PostInfo postInfo);
+    }
+    public interface ClickedDeleteAction{
         void Onclick(PostInfo postInfo);
     }
 
@@ -197,7 +202,6 @@ public class PostViewAdapter extends
             if (postCardBinding.imageView3.getVisibility() == View.VISIBLE) {
                 setDianzan(postInfo.post.if_zan);
                 postCardBinding.imageView3.setOnClickListener(view -> {
-                    Log.d("w", "wrrrrrrrrrrrrrrrr");
                     postInfo.post.set_dianzan(postInfo.post.if_zan ? 0 : 1);
                 });
                 postInfo.post.status.observe(pLifecycle, status -> {
@@ -206,6 +210,12 @@ public class PostViewAdapter extends
                     }
                 });
             }
+            if (postInfo.post.uid == GlobalData.getUser().uid){
+                postCardBinding.layoutToDelete.setVisibility(View.VISIBLE);
+            }
+            else{
+                postCardBinding.layoutToDelete.setVisibility(View.INVISIBLE);
+            }
         }
 
         public void createAttachmentView(){
@@ -213,8 +223,8 @@ public class PostViewAdapter extends
             if(postInfo != null && postInfo.post != null && postInfo.post.res_ids != null) {
                 ArrayList<Integer> id_list = postInfo.post.res_ids;
                 int type = postInfo.post.res_type;
-                if (type == FILE_TYPE_IMG && type != resType) {
-                    resType = FILE_TYPE_IMG;
+                if (type != resType) {
+                    resType = type;
                     int n = id_list.size();
                     if (n > 0) {
                         GridLayout gridLayout = postCardBinding.postResGrid;
@@ -239,15 +249,21 @@ public class PostViewAdapter extends
         public void updateAttatchmentView(){
             if(postInfo != null && postInfo.post != null) {
                 ArrayList<Uri> uri_list = postInfo.post.res_uri_list;
+                Log.d("TAG", uri_list.toString());
                 for (int i = 0; i < attatchedViewList.size(); i++) {
                     if(i>=uri_list.size())break;
                     DownloadView view = attatchedViewList.get(i);
                     Uri uri = uri_list.get(i);
                     if (uri != null) {
-                        Log.d("Post Attatcj=h", "updateAttatchmentView: "+uri.getPath());
-                        Drawable drawable = Drawable.createFromPath(uri.getPath());
-                        view.setImageDrawable(drawable);
+                        //Log.d("Post Attatcj=h", "updateAttatchmentView: "+uri.getPath());
+                        //Drawable drawable = Drawable.createFromPath(uri.getPath());
+                        //view.setImageDrawable(drawable);
+                        Log.d("TAG", String.valueOf(postInfo.post.res_type));
                         view.hideMask();
+                        if (postInfo.post.res_type == FILE_TYPE_IMG)
+                            view.setImageUri(uri);
+                        else if (postInfo.post.res_type == FILE_TYPE_VID)
+                            view.setVideoUri(uri);
                     }
                 }
             }
@@ -259,6 +275,8 @@ public class PostViewAdapter extends
             } else {
                 postCardBinding.imageView3.setImageTintList(parentContext.getColorStateList(R.color.green_400));
             }
+            postCardBinding.textNZan.setText(String.valueOf(postInfo.post.n_dianzan));
+            postCardBinding.textViewZanlist.setText(String.format("%s", postInfo.post.zanDetail));
         }
 
         public void bindTailTitle(String title){
