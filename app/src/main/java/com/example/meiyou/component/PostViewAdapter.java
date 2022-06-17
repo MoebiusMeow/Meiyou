@@ -1,23 +1,38 @@
 package com.example.meiyou.component;
 
+import static com.example.meiyou.model.Post.TYPE_HEAD_POST;
+import static com.example.meiyou.model.Post.TYPE_POST;
+import static com.example.meiyou.model.Post.TYPE_REPLY;
+import static com.example.meiyou.utils.GlobalData.FILE_TYPE_IMG;
+import static com.example.meiyou.utils.GlobalData.FILE_TYPE_NONE;
+import static com.example.meiyou.utils.GlobalData.FILE_TYPE_VID;
+
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.gridlayout.widget.GridLayout;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.meiyou.R;
 import com.example.meiyou.databinding.ComponentLoadmoreBinding;
 import com.example.meiyou.databinding.ComponentPostcardBinding;
-import com.example.meiyou.databinding.ComponentUploadProgressBinding;
 import com.example.meiyou.model.Post;
+import com.example.meiyou.utils.GlobalData;
+import com.example.meiyou.utils.NetworkBasic;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 
@@ -25,8 +40,9 @@ import java.util.LinkedList;
 //
 public class PostViewAdapter extends
         RecyclerView.Adapter<PostViewAdapter.PostCard>{
-    private final LinkedList<PostInfo> mPostList = new LinkedList<>();
+    private final LinkedList<PostInfo> postInfoList = new LinkedList<>();
     private final LayoutInflater mInflater;
+    private LifecycleOwner pLifecycle;
     public static final int MAX_TITLE_LEN = 20, MAX_CONTENT_LEN = 80;
     public static final int TYPE_POST_CARD = 0x01, TYPE_TAIL = 0x02, TYPE_EMPTY_TAIL = 0x03;
     public static final int STYLE_STANDARD = 0x01, STYLE_NOT_PUBLISHED = 0x02;
@@ -37,9 +53,19 @@ public class PostViewAdapter extends
     public interface ClickedPostcardAction{
         void Onclick(PostInfo postInfo);
     }
+    public interface ClickedDeleteAction{
+        void Onclick(PostInfo postInfo);
+    }
 
     private LoadMoreAction loadMoreAction = () -> { };
-    private ClickedPostcardAction clickedPostcardAction = postInfo -> { };
+    private ClickedPostcardAction clickedPostcardAction = postInfo -> {
+        Log.d("PostInfo", ": uid="+postInfo.post.uid+" global uid="
+                + GlobalData.getUser().uid);
+    };
+    private ClickedDeleteAction clickedDeleteAction = postInfo -> {
+        Log.d("PostInfo", ": uid="+postInfo.post.uid+" global uid="
+                + GlobalData.getUser().uid);
+    };
 
     public void setOnLoadMoreAction(LoadMoreAction action){
         loadMoreAction = action;
@@ -47,9 +73,12 @@ public class PostViewAdapter extends
 
     public void setOnClickedPost(ClickedPostcardAction action){ clickedPostcardAction = action; }
 
-    public PostViewAdapter(Context context) {
+    public void setOnClickedDelete(ClickedDeleteAction action){ clickedDeleteAction = action; }
+
+    public PostViewAdapter(Context context, LifecycleOwner lifecycle) {
         mInflater = LayoutInflater.from(context);
-        mPostList.addLast(new PostInfo("点击加载更多...","", TYPE_TAIL));
+        postInfoList.addLast(new PostInfo("点击加载更多...","", TYPE_TAIL));
+        pLifecycle = lifecycle;
     }
 
 
@@ -121,10 +150,16 @@ public class PostViewAdapter extends
         private final int mType;
         private PostInfo postInfo;
 
+        Context parentContext;
+
         public static final String TAG_LOG = "PostViewAdapter";
 
-        public PostCard(View itemView, PostViewAdapter adapter, int _type) {
+        private ArrayList<DownloadView> attatchedViewList = new ArrayList<>();
+        private int resType = FILE_TYPE_NONE;
+
+        public PostCard(View itemView, PostViewAdapter adapter, Context context, int _type) {
             super(itemView);
+            parentContext = context;
             if(_type == TYPE_POST_CARD)
                 postCardBinding = ComponentPostcardBinding.bind(itemView);
             if(_type == TYPE_EMPTY_TAIL || _type == TYPE_TAIL)
@@ -158,6 +193,101 @@ public class PostViewAdapter extends
                 postCardBinding.textPostUsername.setVisibility(View.GONE);
                 postCardBinding.textPostID.setVisibility(View.GONE);
             }
+            if(postInfo.post.type != TYPE_HEAD_POST){
+                postCardBinding.textViewZanlist.setVisibility(View.GONE);
+            }
+            if(postInfo.post.type == TYPE_REPLY){
+                postCardBinding.postCardTitle.setVisibility(View.GONE);
+                postCardBinding.FootArea.setVisibility(View.GONE);
+            }
+            if(postInfo.post.type == TYPE_HEAD_POST){
+                postCardBinding.postCardTitle.setTextSize(24);
+                String dianzanDetail = postInfo.post.zanDetail;
+                postCardBinding.textViewZanlist.setText(dianzanDetail);
+                postCardBinding.replyNumberLayout.setVisibility(View.GONE);
+            }
+            if (postCardBinding.imageView3.getVisibility() == View.VISIBLE) {
+                setDianzan(postInfo.post.if_zan);
+                postCardBinding.imageView3.setOnClickListener(view -> {
+                    postInfo.post.set_dianzan(postInfo.post.if_zan ? 0 : 1);
+                });
+                postInfo.post.status.observe(pLifecycle, status -> {
+                    if (status == NetworkBasic.Status.success) {
+                        setDianzan(postInfo.post.if_zan);
+                    }
+                });
+            }
+            if (postInfo.post.uid == GlobalData.getUser().uid){
+                postCardBinding.layoutToDelete.setVisibility(View.VISIBLE);
+                postCardBinding.layoutToDelete.setOnClickListener(view -> {
+                    Log.d("TAG", "bindPostInfo: Clicked!!!");
+                    clickedDeleteAction.Onclick(postInfo);
+                });
+            }
+            else{
+                postCardBinding.layoutToDelete.setVisibility(View.INVISIBLE);
+            }
+        }
+
+        public void createAttachmentView(){
+            Context context = parentContext;
+            if(postInfo != null && postInfo.post != null && postInfo.post.res_ids != null) {
+                ArrayList<Integer> id_list = postInfo.post.res_ids;
+                int type = postInfo.post.res_type;
+                if (type != resType) {
+                    resType = type;
+                    int n = id_list.size();
+                    if (n > 0) {
+                        GridLayout gridLayout = postCardBinding.postResGrid;
+                        gridLayout.removeAllViews();
+                        attatchedViewList.clear();
+                        for (int i = 0; i < n; i++) {
+                            DownloadView downloadView = new DownloadView(context);
+                            downloadView.setImageResource(R.drawable.defaultimage);
+                            attatchedViewList.add(downloadView);
+                            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+                            params.width = 0;
+                            params.rowSpec = GridLayout.spec((int)(i/3),1,1f);
+                            params.columnSpec = GridLayout.spec((int)(i%3),1,1f);
+                            params.setMargins(2,2,2,2);
+                            gridLayout.addView(downloadView, params);
+                        }
+                    }
+                }
+            }
+        }
+
+        public void updateAttatchmentView(){
+            if(postInfo != null && postInfo.post != null) {
+                ArrayList<Uri> uri_list = postInfo.post.res_uri_list;
+                Log.d("TAG", uri_list.toString());
+                for (int i = 0; i < attatchedViewList.size(); i++) {
+                    if(i>=uri_list.size())break;
+                    DownloadView view = attatchedViewList.get(i);
+                    Uri uri = uri_list.get(i);
+                    if (uri != null) {
+                        //Log.d("Post Attatcj=h", "updateAttatchmentView: "+uri.getPath());
+                        //Drawable drawable = Drawable.createFromPath(uri.getPath());
+                        //view.setImageDrawable(drawable);
+                        Log.d("TAG", String.valueOf(postInfo.post.res_type));
+                        view.hideMask();
+                        if (postInfo.post.res_type == FILE_TYPE_IMG)
+                            view.setImageUri(uri);
+                        else if (postInfo.post.res_type == FILE_TYPE_VID)
+                            view.setVideoUri(uri);
+                    }
+                }
+            }
+        }
+
+        public void setDianzan(boolean if_zan) {
+            if (if_zan) {
+                postCardBinding.imageView3.setImageTintList(parentContext.getColorStateList(R.color.pink_500));
+            } else {
+                postCardBinding.imageView3.setImageTintList(parentContext.getColorStateList(R.color.green_400));
+            }
+            postCardBinding.textNZan.setText(String.valueOf(postInfo.post.n_dianzan));
+            postCardBinding.textViewZanlist.setText(String.format("%s", postInfo.post.zanDetail));
         }
 
         public void bindTailTitle(String title){
@@ -178,22 +308,23 @@ public class PostViewAdapter extends
     }
 
     public void clear(){
-        PostInfo mLastHolder = mPostList.getLast();
-        mPostList.clear();
-        mPostList.addLast(mLastHolder);
+        PostInfo mLastHolder = postInfoList.getLast();
+        postInfoList.clear();
+        postInfoList.addLast(mLastHolder);
         notifyDataSetChanged();
     }
 
     public void addPost(PostInfo newPost){
-        PostInfo mLastHolder = mPostList.getLast();
-        mPostList.removeLast();
-        mPostList.addLast(newPost);
-        mPostList.addLast(mLastHolder);
+        Log.d("TAG", "addPost: id="+newPost.getPost().pid);
+        PostInfo mLastHolder = postInfoList.getLast();
+        postInfoList.removeLast();
+        postInfoList.addLast(newPost);
+        postInfoList.addLast(mLastHolder);
         notifyDataSetChanged();
     }
 
     public void changeTail(boolean ifNoMore){
-        PostInfo mLastHolder = mPostList.getLast();
+        PostInfo mLastHolder = postInfoList.getLast();
         if(ifNoMore){
             mLastHolder.setType(TYPE_EMPTY_TAIL);
             mLastHolder.setTitle("没有更多内容了哦~");
@@ -207,7 +338,7 @@ public class PostViewAdapter extends
 
     @Override
     public int getItemViewType(int position){
-        return mPostList.get(position).getType();
+        return postInfoList.get(position).getType();
     }
 
     @NotNull
@@ -222,23 +353,26 @@ public class PostViewAdapter extends
         else {
             tmpView = mInflater.inflate(R.layout.component_postcard, parent, false);
         }
-        return new PostCard(tmpView, this, viewType);
+        PostCard postCard = new PostCard(tmpView, this, parent.getContext(), viewType);
+        return postCard;
     }
 
     @Override
     public void onBindViewHolder(@NonNull PostCard holder, int position) {
-        PostInfo postInfo = mPostList.get(position);
+        PostInfo postInfo = postInfoList.get(position);
         if(holder.mType == TYPE_POST_CARD) {
             holder.bindPostInfo(postInfo);
         }
         else if(holder.mType == TYPE_TAIL || holder.mType == TYPE_EMPTY_TAIL){
             holder.bindTailTitle(postInfo.getTitle());
         }
+        holder.createAttachmentView();
+        holder.updateAttatchmentView();
     }
 
     @Override
     public int getItemCount() {
-        return mPostList.size();
+        return postInfoList.size();
     }
 
 }

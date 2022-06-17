@@ -25,10 +25,15 @@ public class NetworkConstant extends Activity {
     public static final String getSinglePostUrl = serverUrl + "/postdetail";
     public static final String getMultiplePostUrl = serverUrl + "/getpost";
     public static final String sendPostUrl = serverUrl + "/post";
+    public static final String replyPostUrl = serverUrl + "/reply";
     public static final String downloadUrl = serverUrl + "/download";
     public static final String uploadUrl = serverUrl + "/upload";
     public static final String setUserInfoUrl = serverUrl + "/setinfo";
     public static final String setPasswordUrl = serverUrl + "/setpasswd";
+    public static final String getReplyUrl = serverUrl + "/getreply";
+    public static final String setDianzanUrl = serverUrl + "/dianzanpost";
+    public static final String removePostUrl = serverUrl + "/removepost";
+    public static final String removeReplyUrl = serverUrl + "/removereply";
 
     /* Method to build http Call */
     public static final OkHttpClient client = new OkHttpClient.Builder()

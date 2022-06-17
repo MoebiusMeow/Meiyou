@@ -20,4 +20,7 @@
     <color name="green_200">#C6E3A4</color>
     <color name="green_400">#809F5B</color>
     <color name="green_600">#526A36</color>
+    <color name="light_blue_400">#FF29B6F6</color>
+    <color name="light_blue_600">#FF039BE5</color>
+    <color name="gray_600">#FF757575</color>
 </resources>

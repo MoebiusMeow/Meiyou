@@ -64,7 +64,7 @@ public class FileUploader extends NetworkBasic {
             while ((read = source.read(sink.buffer(), SEGMENT_SIZE)) != -1) {
                 total += read;
                 sink.flush();
-                this.listener.transferred((float) total/file.available());
+                this.listener.transferred((float) total/(total + file.available()));
             }
         }
         public interface ProgressListener { void transferred(float num);}
@@ -84,7 +84,9 @@ public class FileUploader extends NetworkBasic {
 
     // Upload file to server
     public Call put(Uri uri, String type, CountingFileRequestBody.ProgressListener listener) throws FileNotFoundException {
-        Log.d("uwu", contentResolver.getType(uri));
+        //Log.d("uwu", contentResolver.getType(uri));
+        if (contentResolver.getType(uri) == null)
+            throw new FileNotFoundException(uri.toString());
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("file", "uwu." + contentResolver.getType(uri).split("/")[1], new CountingFileRequestBody(
