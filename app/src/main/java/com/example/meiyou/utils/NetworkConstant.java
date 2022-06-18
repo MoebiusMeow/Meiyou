@@ -40,6 +40,7 @@ public class NetworkConstant extends Activity {
     public static final String addBanUrl = serverUrl + "/addban";
     public static final String removeBanUrl = serverUrl + "/removeban";
     public static final String banListUrl = serverUrl + "/banlist";
+    public static final String searchPostUrl = serverUrl + "/search";
 
 
     /* Method to build http Call */

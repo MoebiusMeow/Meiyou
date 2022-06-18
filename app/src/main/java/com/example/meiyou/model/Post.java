@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.example.meiyou.R;
+import com.example.meiyou.activity.SearchPostActivity;
 import com.example.meiyou.utils.GlobalData;
 import com.example.meiyou.utils.NetworkBasic;
 import com.example.meiyou.utils.NetworkConstant;
@@ -42,6 +43,7 @@ public class Post extends NetworkBasic implements Serializable {
     public boolean followed = false;
     public static final int TYPE_POST = 0, TYPE_REPLY = 1, TYPE_HEAD_POST = 2;
     public int type = TYPE_POST;
+    public SearchPostActivity.SearchParam searchParam = null;
 
     private static final long serialVersionUID = 19260817L;
 

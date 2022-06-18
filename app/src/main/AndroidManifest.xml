@@ -30,6 +30,9 @@
         android:theme="@style/Theme.Meiyou"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activity.SearchPostActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.UserPageActivity"
             android:exported="false" />
         <activity

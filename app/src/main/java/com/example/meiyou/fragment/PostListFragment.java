@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.meiyou.activity.SearchPostActivity;
 import com.example.meiyou.activity.SinglePostActivity;
 import com.example.meiyou.activity.UserPageActivity;
 import com.example.meiyou.component.PostViewAdapter;
@@ -98,7 +99,7 @@ public class PostListFragment extends Fragment {
                 Toast.makeText(getActivity(), "糟糕，网络好像不太通畅..", Toast.LENGTH_SHORT).show();
             }
             if(status == NetworkBasic.Status.wrong){
-                if(postListModel.errorCode == 404){
+                if(postListModel.errorCode == 404 && mode == MODE_SINGLE_POST){
                     GlobalData.sig_post.postValue(SIG_POST_DELETE);
                     getActivity().finish();
                 }
@@ -218,6 +219,7 @@ public class PostListFragment extends Fragment {
     public void setPostID(int post_id){
         postListModel.setFixPid(post_id);
     }
+    public void setSearchParam(SearchPostActivity.SearchParam param){postListModel.setSearchParam(param);}
 
     public void setOnClickedCard(PostViewAdapter.ClickedPostcardAction callback){
         mAdapter.setOnClickedPost(callback);
