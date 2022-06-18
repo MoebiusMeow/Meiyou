@@ -12,6 +12,7 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.MediaController;
@@ -23,6 +24,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.meiyou.R;
 
+import java.io.IOException;
+
 /**
  * TODO: document your custom view class.
  */
@@ -32,6 +35,9 @@ public class DownloadView extends ConstraintLayout {
     private ProgressBar progressBar;
     private ImageView imageView;
     private VideoView videoView;
+    private float ratio = 1.0f;
+    private MediaController controller = null;
+    MediaPlayer player = null;
 
     public DownloadView(Context context) {
         super(context);
@@ -54,6 +60,14 @@ public class DownloadView extends ConstraintLayout {
         progressBar = findViewById(R.id.progressBarDownload);
         imageView = findViewById(R.id.imageViewDownload);
         videoView = findViewById(R.id.videoViewDownload);
+    }
+
+    public void setRatio(float r) {
+        ratio = r;
+    }
+
+    public void setScaleType(ImageView.ScaleType type) {
+        imageView.setScaleType(type);
     }
 
     public void setImageUri(Uri uri) {
@@ -83,14 +97,65 @@ public class DownloadView extends ConstraintLayout {
         });*/
         videoView.setVideoURI(uri);
 
-        MediaController controller = new MediaController(this.getContext());
+        controller = new MediaController(this.getContext());
         videoView.setMediaController(controller);
-        controller.setAnchorView(this);
+        controller.setAnchorView(videoView);
         controller.setMediaPlayer(videoView);
 
         videoView.start();
         videoView.requestFocus();
         Log.d("TAG", "setVideoUri: Set!" + uri.toString());
+    }
+
+    public void setAudioUri(Uri uri) {
+        controller = new MediaController(this.getContext());
+        player = new MediaPlayer();
+        player.setOnPreparedListener(mediaPlayer -> {
+            imageView.setFocusable(true);
+            imageView.setOnClickListener(view -> {
+                imageView.requestFocus();
+                controller.show();
+            });
+            imageView.setOnFocusChangeListener((view, b) -> {
+                if (!b) {
+                    Log.d("meow", "out");
+                }
+            });
+            imageView.addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
+                @Override
+                public void onViewAttachedToWindow(View view) {
+                }
+
+                @Override
+                public void onViewDetachedFromWindow(View view) {
+                    controller.hide();
+                    if (player.isPlaying()) {
+                        player.pause();
+                    }
+                }
+            });
+            controller.setAnchorView(imageView);
+            controller.setMediaPlayer(new MediaController.MediaPlayerControl() {
+                @Override public void start() { player.start(); }
+                @Override public void pause() { player.stop(); }
+                @Override public int getDuration() { return player.getDuration(); }
+                @Override public int getCurrentPosition() { return player.getCurrentPosition(); }
+                @Override public void seekTo(int i) { player.seekTo(i); }
+                @Override public boolean isPlaying() { return player.isPlaying(); }
+                @Override public int getBufferPercentage() { return 100; }
+                @Override public boolean canPause() { return true; }
+                @Override public boolean canSeekBackward() { return true; }
+                @Override public boolean canSeekForward() { return true; }
+                @Override public int getAudioSessionId() { return player.getAudioSessionId(); }
+            });
+        });
+        try {
+            Log.d("meow", uri.toString());
+            player.setDataSource(getContext(), uri);
+            player.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setImageDrawable(Drawable drawable){
@@ -106,6 +171,15 @@ public class DownloadView extends ConstraintLayout {
         progressBar.setVisibility(INVISIBLE);
     }
 
+    public void clear() {
+        if (controller != null) {
+            controller.hide();
+            player.release();
+            controller = null;
+            player = null;
+        }
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
@@ -114,7 +188,7 @@ public class DownloadView extends ConstraintLayout {
         if (widthMode == MeasureSpec.EXACTLY && heightMode != MeasureSpec.EXACTLY) {
             int width = MeasureSpec.getSize(widthMeasureSpec);
             int height = MeasureSpec.getSize(heightMeasureSpec);
-            height = width;
+            height = (int)(width * ratio);
             int h = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
             super.onMeasure(widthMeasureSpec, h);
             Log.d("TAG", "onMeasure: "+width+" "+height);
@@ -122,5 +196,10 @@ public class DownloadView extends ConstraintLayout {
 
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
+    }
+
+    public void finalize()
+    {
+        clear();
     }
 }
