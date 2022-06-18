@@ -48,8 +48,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="搜索内容或标题"
-                app:layout_constraintTop_toBottomOf="@+id/imageView4"
-                tools:layout_editor_absoluteX="157dp" />
+                app:layout_constraintEnd_toEndOf="@+id/imageView4"
+                app:layout_constraintStart_toStartOf="@+id/imageView4"
+                app:layout_constraintTop_toBottomOf="@+id/imageView4" />
 
             <ImageView
                 android:id="@+id/imageView4"
