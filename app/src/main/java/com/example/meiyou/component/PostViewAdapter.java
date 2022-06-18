@@ -196,7 +196,9 @@ public class PostViewAdapter extends
                 }
             }
             if(postInfo.style == STYLE_NOT_PUBLISHED) {
-                postCardBinding.FootArea.setVisibility(View.GONE);
+                //postCardBinding.FootArea.setVisibility(View.GONE);
+                postCardBinding.replyDianzanLayout.setVisibility(View.GONE);
+                postCardBinding.replyNumberLayout.setVisibility(View.GONE);
                 postCardBinding.postUserProfile.setVisibility(View.GONE);
                 postCardBinding.textPostUsername.setVisibility(View.GONE);
                 postCardBinding.textPostID.setVisibility(View.GONE);
