@@ -155,6 +155,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
 
+        <TextView
+            android:id="@+id/textFollowed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="[已关注]"
+            android:textColor="@color/pink_500"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/textUserpageName"
+            app:layout_constraintStart_toEndOf="@+id/textUserpageName" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

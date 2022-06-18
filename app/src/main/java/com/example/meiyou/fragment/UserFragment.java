@@ -157,6 +157,7 @@ public class UserFragment extends Fragment {
                     getActivity().getColor(R.color.pink_500)
                             , getActivity().getColor(R.color.pink_500)
             ));
+            binding.textFollowed.setVisibility(View.INVISIBLE);
         }
         else{
             binding.buttonFollow.setText("取消关注");
@@ -165,6 +166,7 @@ public class UserFragment extends Fragment {
                             getActivity().getColor(R.color.gray_100)
                             , getActivity().getColor(R.color.gray_200)
                     ));
+            binding.textFollowed.setVisibility(View.VISIBLE);
         }
     }
 }

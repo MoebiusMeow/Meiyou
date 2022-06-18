@@ -245,6 +245,9 @@ public class PostViewAdapter extends
             postCardBinding.postUserProfile.setOnClickListener(view -> {
                 clickedUserProfile.Onclick(postInfo.post.uid);
             });
+            postCardBinding.textFollowed2.setVisibility(
+                    postInfo.post.followed? View.VISIBLE:View.INVISIBLE
+            );
         }
 
         public void createAttachmentView(){
