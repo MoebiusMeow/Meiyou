@@ -56,6 +56,9 @@ public class PostViewAdapter extends
     public interface ClickedDeleteAction{
         void Onclick(PostInfo postInfo);
     }
+    public interface ClickedUserProfile{
+        void Onclick(int uid);
+    }
 
     private LoadMoreAction loadMoreAction = () -> { };
     private ClickedPostcardAction clickedPostcardAction = postInfo -> {
@@ -66,6 +69,9 @@ public class PostViewAdapter extends
         Log.d("PostInfo", ": uid="+postInfo.post.uid+" global uid="
                 + GlobalData.getUser().uid);
     };
+    private ClickedUserProfile clickedUserProfile = uid -> {
+        Log.d("UserClick", ": uid="+uid);
+    };
 
     public void setOnLoadMoreAction(LoadMoreAction action){
         loadMoreAction = action;
@@ -74,6 +80,8 @@ public class PostViewAdapter extends
     public void setOnClickedPost(ClickedPostcardAction action){ clickedPostcardAction = action; }
 
     public void setOnClickedDelete(ClickedDeleteAction action){ clickedDeleteAction = action; }
+
+    public void setOnClickedProfile(ClickedUserProfile action){ clickedUserProfile = action; }
 
     public PostViewAdapter(Context context, LifecycleOwner lifecycle) {
         mInflater = LayoutInflater.from(context);
@@ -227,6 +235,16 @@ public class PostViewAdapter extends
             else{
                 postCardBinding.layoutToDelete.setVisibility(View.INVISIBLE);
             }
+            if(postInfo.post.pos != null){
+                postCardBinding.cardPos.setVisibility(View.VISIBLE);
+                postCardBinding.textViewPos4.setText(postInfo.post.pos);
+            }
+            else{
+                postCardBinding.cardPos.setVisibility(View.GONE);
+            }
+            postCardBinding.postUserProfile.setOnClickListener(view -> {
+                clickedUserProfile.Onclick(postInfo.post.uid);
+            });
         }
 
         public void createAttachmentView(){

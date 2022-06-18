@@ -37,6 +37,7 @@ public class SinglePostActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         pid = Integer.valueOf(intent.getStringExtra(EXTRA_PID));
+        Log.d("POSTPID", "onCreate: pid="+pid);
         if(pid <=0){
             setResult(RESULT_CANCELED);
             finish();
@@ -50,8 +51,7 @@ public class SinglePostActivity extends AppCompatActivity {
         postListFragment.setPostID(pid);
         postListFragment.setOnRenewCallback(count -> {
             Log.d("Change", "onCreate: "+count);
-            if(count <=1 ){
-
+            if(count <=0 ){
                 finish();
             }
         });

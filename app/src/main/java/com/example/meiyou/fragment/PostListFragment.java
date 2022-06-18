@@ -1,7 +1,11 @@
 package com.example.meiyou.fragment;
 
+import static android.app.Activity.RESULT_OK;
 import static com.example.meiyou.model.PostList.MODE_SINGLE_POST;
+import static com.example.meiyou.model.PostList.MODE_USER_FIX;
 import static com.example.meiyou.utils.GlobalData.FILE_TYPE_NONE;
+import static com.example.meiyou.utils.GlobalData.SIG_FORCE_REFRESH;
+import static com.example.meiyou.utils.GlobalData.SIG_POST_DELETE;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.meiyou.activity.SinglePostActivity;
+import com.example.meiyou.activity.UserPageActivity;
 import com.example.meiyou.component.PostViewAdapter;
 import com.example.meiyou.databinding.FragmentPostlistBinding;
 import com.example.meiyou.model.Post;
@@ -46,7 +51,8 @@ public class PostListFragment extends Fragment {
         mode = 4;
     }
 
-    private ActivityResultLauncher<Intent> activitySinglePostLauncher;
+    private ActivityResultLauncher<Intent> activitySinglePostLauncher,
+            activityUserPageLauncher;
 
     public interface OnRenewCallback{
         void onRenew(int count);
@@ -66,11 +72,20 @@ public class PostListFragment extends Fragment {
         mAdapter = new PostViewAdapter(this.getContext(), this.getViewLifecycleOwner());
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        binding.progressBar2.setVisibility(View.VISIBLE);
 
         activitySinglePostLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
 
+                });
+
+        activityUserPageLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if(result.getResultCode() == RESULT_OK){
+                        GlobalData.sig_refresh.postValue(SIG_FORCE_REFRESH);
+                    }
                 });
 
         // on Post list get
@@ -80,6 +95,11 @@ public class PostListFragment extends Fragment {
                 Toast.makeText(getActivity(), "糟糕，网络好像不太通畅..", Toast.LENGTH_SHORT).show();
             }
             if(status == NetworkBasic.Status.wrong){
+                if(postListModel.errorCode == 404){
+                    GlobalData.sig_post.postValue(SIG_POST_DELETE);
+                    getActivity().finish();
+                }
+                Log.d("error", "onCreateView: error_code="+postListModel.errorCode);
                 Toast.makeText(getActivity(), "发生了一些小错误...", Toast.LENGTH_SHORT).show();
             }
 
@@ -87,8 +107,6 @@ public class PostListFragment extends Fragment {
                 if(mode == MODE_SINGLE_POST )
                     Log.d("SINGLE-POST", "netreturn: newstart="+postListModel.new_start
                             +" end="+postListModel.len());
-                Log.d("Change", "onCreateView: "+postListModel.len());
-                onRenewCallback.onRenew(postListModel.len());
                 for(int i = postListModel.new_start; i< postListModel.len(); i++){
                     Post post = postListModel.get(i);
                     mAdapter.addPost(PostViewAdapter.PostInfo.fromPost(post));
@@ -123,12 +141,15 @@ public class PostListFragment extends Fragment {
         });
 
         mAdapter.setOnLoadMoreAction(() -> load());
+
         if(mode!=MODE_SINGLE_POST)
             mAdapter.setOnClickedPost(postInfo -> {
-                Intent intent = new Intent(getActivity(), SinglePostActivity.class);
-                Log.d("SINGLE-POST", "onCreateView: pid="+postInfo.getPost().pid);
-                intent.putExtra(SinglePostActivity.EXTRA_PID, String.valueOf(postInfo.getPost().pid));
-                activitySinglePostLauncher.launch(intent);
+                if(postInfo!=null && postInfo.getPost() != null) {
+                    Intent intent = new Intent(getActivity(), SinglePostActivity.class);
+                    Log.d("SINGLE-POST", "onCreateView: pid=" + postInfo.getPost().pid);
+                    intent.putExtra(SinglePostActivity.EXTRA_PID, String.valueOf(postInfo.getPost().pid));
+                    activitySinglePostLauncher.launch(intent);
+                }
             });
 
         mAdapter.setOnClickedDelete(postInfo -> {
@@ -156,7 +177,20 @@ public class PostListFragment extends Fragment {
             alert.show();
         });
 
+        if(mode != MODE_USER_FIX)
+            mAdapter.setOnClickedProfile(uid->{
+                Intent intent = new Intent(getActivity(), UserPageActivity.class);
+                intent.putExtra(UserPageActivity.USER_UID, uid);
+                activityUserPageLauncher.launch(intent);
+            });
+
         refresh();
+
+        GlobalData.sig_refresh.observe(getViewLifecycleOwner(), integer -> {
+            if(integer == GlobalData.SIG_FORCE_REFRESH){
+                refresh();
+            }
+        });
 
         return view;
     }

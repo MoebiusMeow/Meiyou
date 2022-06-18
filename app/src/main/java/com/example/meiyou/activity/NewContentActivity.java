@@ -64,6 +64,7 @@ public class NewContentActivity extends AppCompatActivity {
     Uri imageUri = null;
 
     private int nSelected = 0;
+    private String pos = null;
 
 
     private int pid = 0;
@@ -95,6 +96,14 @@ public class NewContentActivity extends AppCompatActivity {
         else{
             binding.textNewContentTitle.setText("新帖子");
         }
+
+        binding.textViewPos.setVisibility(View.GONE);
+        binding.imageViewDeletePos.setVisibility(View.GONE);
+        binding.imageViewDeletePos.setOnClickListener(view -> {
+            pos = null;
+            binding.textViewPos.setVisibility(View.GONE);
+            binding.imageViewDeletePos.setVisibility(View.GONE);
+        });
 
         // Get Intent message
         Post post = (Post) getIntent().getSerializableExtra(POST_SAVED);
@@ -177,11 +186,17 @@ public class NewContentActivity extends AppCompatActivity {
                         if (data != null){
                             try {
                                 Log.d("mmu", data.getStringExtra("address"));
-                                binding.editTextContent.append(
+                                /*binding.editTextContent.append(
                                         "[" + data.getStringExtra("address") + " " +
                                         "(" + data.getStringExtra("latitude") +
                                         ", " + data.getStringExtra("longitude") +
                                         ")]");
+                                 */
+                                pos = data.getStringExtra("address");
+                                binding.textViewPos.setText(pos);
+                                binding.textViewPos.setVisibility(View.VISIBLE);
+                                binding.imageViewDeletePos.setVisibility(View.VISIBLE);
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -454,6 +469,7 @@ public class NewContentActivity extends AppCompatActivity {
         post.res_type = attachedFiletype;
         post.uid = GlobalData.getUser().uid;
         post.pid = this.pid;
+        post.pos = this.pos;
         Log.d("TAG", "buildPost: res_type="+post.res_type);
         if(attachedFiletype != GlobalData.FILE_TYPE_NONE && attachedFiletype != GlobalData.FILE_TYPE_NONE){
             post.res_ids = (ArrayList<Integer>) resIDList.clone();

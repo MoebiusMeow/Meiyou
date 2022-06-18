@@ -54,6 +54,7 @@ public class PostList extends NetworkBasic {
                 NetworkConstant.get(urlBuilder.build().toString(), true, getCommonNetworkCallback(
                         response -> {
                             if (response.code() != 200) {
+                                if(response.code() == 404) errorCode = 404;
                                 status.postValue(Status.wrong);
                                 return;
                             }
@@ -86,6 +87,7 @@ public class PostList extends NetworkBasic {
         NetworkConstant.get(url.toString(), true, getCommonNetworkCallback(
                 response -> {
                     if (response.code() != 200) {
+                        if(response.code() == 404) errorCode = 404;
                         status.postValue(Status.wrong);
                         return;
                     }
@@ -118,6 +120,7 @@ public class PostList extends NetworkBasic {
         NetworkConstant.get(url.toString(), true, getCommonNetworkCallback(
                 response -> {
                     if (response.code() != 200) {
+                        if(response.code() == 404) errorCode = 404;
                         status.postValue(Status.wrong);
                         return;
                     }

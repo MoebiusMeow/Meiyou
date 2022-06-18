@@ -69,6 +69,13 @@ public class Post extends NetworkBasic implements Serializable {
         this.username = postObj.getString("username");
         this.uid = postObj.getInt("uid");
         this.datetime = postObj.getString("datetime");
+        try{
+            this.pos = postObj.getString("pos");
+            if(this.pos.equals("null")) this.pos = null;
+        }
+        catch (Exception e){
+            this.pos = null;
+        }
 
         String post_id_str = postObj.getString("resids");
         if (post_id_str != null && !post_id_str.equals("null")) {
