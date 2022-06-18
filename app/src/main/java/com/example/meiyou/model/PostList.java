@@ -190,4 +190,12 @@ public class PostList extends NetworkBasic {
         ));
     }
 
+    public String getAbstract(){
+        if(len()>=1){
+            Post post_head = postList.get(0);
+            return "#" + post_head.pid+" "+post_head.title+" "+post_head.content;
+        }
+        return "";
+    }
+
 }

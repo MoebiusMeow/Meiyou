@@ -3,6 +3,10 @@ package com.example.meiyou.model;
 import com.example.meiyou.utils.NetworkBasic;
 import com.example.meiyou.utils.NetworkConstant;
 
+import org.json.JSONObject;
+
+import java.util.Objects;
+
 import okhttp3.HttpUrl;
 
 public class UserBanSender extends NetworkBasic {
@@ -22,6 +26,9 @@ public class UserBanSender extends NetworkBasic {
                         status.postValue(Status.wrong);
                         return;
                     }
+                    JSONObject jsonObject = new JSONObject(
+                            Objects.requireNonNull(response.body()).string());
+                    errorCode = jsonObject.getInt("id");
                     status.postValue(Status.success);
                 }
         ));

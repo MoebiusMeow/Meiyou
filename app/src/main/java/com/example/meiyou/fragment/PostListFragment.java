@@ -64,6 +64,7 @@ public class PostListFragment extends Fragment {
         Log.d("TAG", ": haode");
     };
     public void setOnRenewCallback(OnRenewCallback action){onRenewCallback = action;}
+    public String getAbstract(){return postListModel.getAbstract();}
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
