@@ -55,10 +55,21 @@ public class PostViewAdapter extends
     public interface ClickedDeleteAction{
         void Onclick(PostInfo postInfo);
     }
+    public interface ClickedUserProfile{
+        void Onclick(int uid);
+    }
 
     private LoadMoreAction loadMoreAction = () -> { };
     private ClickedPostcardAction clickedPostcardAction = postInfo -> {
-        Log.d("PostInfo", ": res_id="+postInfo.post.res_ids);
+        Log.d("PostInfo", ": uid="+postInfo.post.uid+" global uid="
+                + GlobalData.getUser().uid);
+    };
+    private ClickedDeleteAction clickedDeleteAction = postInfo -> {
+        Log.d("PostInfo", ": uid="+postInfo.post.uid+" global uid="
+                + GlobalData.getUser().uid);
+    };
+    private ClickedUserProfile clickedUserProfile = uid -> {
+        Log.d("UserClick", ": uid="+uid);
     };
 
     public void setOnLoadMoreAction(LoadMoreAction action){
@@ -66,6 +77,10 @@ public class PostViewAdapter extends
     }
 
     public void setOnClickedPost(ClickedPostcardAction action){ clickedPostcardAction = action; }
+
+    public void setOnClickedDelete(ClickedDeleteAction action){ clickedDeleteAction = action; }
+
+    public void setOnClickedProfile(ClickedUserProfile action){ clickedUserProfile = action; }
 
     public PostViewAdapter(Context context, LifecycleOwner lifecycle) {
         mInflater = LayoutInflater.from(context);
@@ -180,7 +195,9 @@ public class PostViewAdapter extends
                 }
             }
             if(postInfo.style == STYLE_NOT_PUBLISHED) {
-                postCardBinding.FootArea.setVisibility(View.GONE);
+                //postCardBinding.FootArea.setVisibility(View.GONE);
+                postCardBinding.replyDianzanLayout.setVisibility(View.GONE);
+                postCardBinding.replyNumberLayout.setVisibility(View.GONE);
                 postCardBinding.postUserProfile.setVisibility(View.GONE);
                 postCardBinding.textPostUsername.setVisibility(View.GONE);
                 postCardBinding.textPostID.setVisibility(View.GONE);
@@ -211,10 +228,27 @@ public class PostViewAdapter extends
             }
             if (postInfo.post.uid == GlobalData.getUser().uid){
                 postCardBinding.layoutToDelete.setVisibility(View.VISIBLE);
+                postCardBinding.layoutToDelete.setOnClickListener(view -> {
+                    Log.d("TAG", "bindPostInfo: Clicked!!!");
+                    clickedDeleteAction.Onclick(postInfo);
+                });
             }
             else{
                 postCardBinding.layoutToDelete.setVisibility(View.INVISIBLE);
             }
+            if(postInfo.post.pos != null){
+                postCardBinding.cardPos.setVisibility(View.VISIBLE);
+                postCardBinding.textViewPos4.setText(postInfo.post.pos);
+            }
+            else{
+                postCardBinding.cardPos.setVisibility(View.GONE);
+            }
+            postCardBinding.postUserProfile.setOnClickListener(view -> {
+                clickedUserProfile.Onclick(postInfo.post.uid);
+            });
+            postCardBinding.textFollowed2.setVisibility(
+                    postInfo.post.followed? View.VISIBLE:View.INVISIBLE
+            );
         }
 
         public void createAttachmentView(){
@@ -315,12 +349,17 @@ public class PostViewAdapter extends
         notifyDataSetChanged();
     }
 
-    public void addPost(PostInfo newPost){
-        Log.d("TAG", "addPost: id="+newPost.getPost().pid);
-        PostInfo mLastHolder = postInfoList.getLast();
-        postInfoList.removeLast();
-        postInfoList.addLast(newPost);
-        postInfoList.addLast(mLastHolder);
+    public void addPost(int index, PostInfo newPost){
+        if(index < postInfoList.size()-1){
+            postInfoList.set(index, newPost);
+        }
+        else {
+            Log.d("TAG", "addPost: id=" + newPost.getPost().pid);
+            PostInfo mLastHolder = postInfoList.getLast();
+            postInfoList.removeLast();
+            postInfoList.addLast(newPost);
+            postInfoList.addLast(mLastHolder);
+        }
         notifyDataSetChanged();
     }
 

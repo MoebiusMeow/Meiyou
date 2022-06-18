@@ -39,6 +39,7 @@ public class Post extends NetworkBasic implements Serializable {
     public int n_reply = 0;
     public int profile_id = -1;
     public Uri userProfileUri = null;
+    public boolean followed = false;
     public static final int TYPE_POST = 0, TYPE_REPLY = 1, TYPE_HEAD_POST = 2;
     public int type = TYPE_POST;
 
@@ -69,6 +70,14 @@ public class Post extends NetworkBasic implements Serializable {
         this.username = postObj.getString("username");
         this.uid = postObj.getInt("uid");
         this.datetime = postObj.getString("datetime");
+        this.followed = postObj.getBoolean("followed");
+        try{
+            this.pos = postObj.getString("pos");
+            if(this.pos.equals("null")) this.pos = null;
+        }
+        catch (Exception e){
+            this.pos = null;
+        }
 
         String post_id_str = postObj.getString("resids");
         if (post_id_str != null && !post_id_str.equals("null")) {
@@ -116,6 +125,23 @@ public class Post extends NetworkBasic implements Serializable {
                     this.if_zan = jsonObject.getBoolean("if_zan");
                     this.n_dianzan = jsonObject.getInt("dianzan");
                     this.zanDetail = jsonObject.getString("dianzandetail");
+                    status.postValue(Status.success);
+                }
+        ));
+    }
+
+    public void request_remove(){
+        status.postValue(Status.idle);
+        String url = type == TYPE_REPLY? NetworkConstant.removeReplyUrl
+                : NetworkConstant.removePostUrl;
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder()
+                .addQueryParameter(type == TYPE_REPLY? "rid":"pid", String.valueOf(pid));
+        NetworkConstant.get(urlBuilder.build().toString(), true, getCommonNetworkCallback(
+                response -> {
+                    if (response.code() != 200) {
+                        status.postValue(Status.wrong);
+                        return;
+                    }
                     status.postValue(Status.success);
                 }
         ));

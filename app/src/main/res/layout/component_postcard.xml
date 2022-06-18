@@ -97,6 +97,18 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent" />
 
+                    <TextView
+                        android:id="@+id/textFollowed2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="[已关注]"
+                        android:textColor="@color/pink_500"
+                        android:textSize="10sp"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toBottomOf="@+id/textPostUsername"
+                        app:layout_constraintStart_toEndOf="@+id/textPostUsername" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <View
@@ -144,13 +156,38 @@
                     app:layout_constraintTop_toBottomOf="@id/postResGrid" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cardPos"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textViewZanlist">
+
+                    <TextView
+                        android:id="@+id/textViewPos4"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/address_small"
+                        android:drawableTint="@color/green_400"
+                        android:gravity="center"
+                        android:text="TextView"
+                        android:textAlignment="textStart"
+                        android:textSize="12sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/FootArea"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginTop="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/textViewZanlist">
+                    app:layout_constraintTop_toBottomOf="@id/cardPos">
 
                     <LinearLayout
                         android:id="@+id/reply_number_layout"
@@ -159,7 +196,7 @@
                         android:layout_marginStart="24dp"
                         android:orientation="horizontal"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/linearLayout"
+                        app:layout_constraintStart_toEndOf="@+id/reply_dianzan_layout"
                         app:layout_constraintTop_toTopOf="parent">
 
                         <ImageView
@@ -181,7 +218,7 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/linearLayout"
+                        android:id="@+id/reply_dianzan_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"

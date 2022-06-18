@@ -16,6 +16,20 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
+            android:id="@+id/buttonReturnUserPage"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="8dp"
+            android:background="#00FFFFFF"
+            android:scaleType="fitXY"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/arrow_left"
+            app:tint="@color/white" />
+
+        <ImageButton
             android:id="@+id/buttonEditProfile"
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -27,6 +41,33 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/editinfo"
             app:tint="@color/white" />
+
+        <ImageButton
+            android:id="@+id/buttonSetBan"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="8dp"
+            android:background="#00FFFFFF"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/buttonEditProfile"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/invisible"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/textBanned"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="[已屏蔽]"
+            android:textColor="@color/red_0"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/buttonSetBan"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -77,6 +118,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
+            android:backgroundTint="@color/pink_500"
             android:minWidth="0dp"
             android:minHeight="0dp"
             android:text="关注"
@@ -128,9 +170,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
 
-        <fragment
+        <FrameLayout
             android:id="@+id/fragmentUser"
-            android:name="com.example.meiyou.fragment.PostListFragment"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="8dp"
@@ -140,6 +181,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
+
+        <TextView
+            android:id="@+id/textFollowed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="[已关注]"
+            android:textColor="@color/pink_500"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/textUserpageName"
+            app:layout_constraintStart_toEndOf="@+id/textUserpageName" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

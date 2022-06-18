@@ -23,6 +23,7 @@ public class PostList extends NetworkBasic {
             MODE_SINGLE_POST = 8;
     private int fix_user = 0;
     private int fix_pid = 0;
+    boolean pulling = false;
 
     public int len(){
         return postList.size();
@@ -35,6 +36,10 @@ public class PostList extends NetworkBasic {
     }
     public void setFixUser(int user){fix_user = user;}
     public void setFixPid(int pid){fix_pid = pid;}
+
+    public PostList(){
+        super();
+    }
 
     /* n:       how many posts pull from server
        mode:    order and filter of posts
@@ -54,6 +59,7 @@ public class PostList extends NetworkBasic {
                 NetworkConstant.get(urlBuilder.build().toString(), true, getCommonNetworkCallback(
                         response -> {
                             if (response.code() != 200) {
+                                if(response.code() == 404) errorCode = 404;
                                 status.postValue(Status.wrong);
                                 return;
                             }
@@ -86,6 +92,7 @@ public class PostList extends NetworkBasic {
         NetworkConstant.get(url.toString(), true, getCommonNetworkCallback(
                 response -> {
                     if (response.code() != 200) {
+                        if(response.code() == 404) errorCode = 404;
                         status.postValue(Status.wrong);
                         return;
                     }
@@ -118,6 +125,7 @@ public class PostList extends NetworkBasic {
         NetworkConstant.get(url.toString(), true, getCommonNetworkCallback(
                 response -> {
                     if (response.code() != 200) {
+                        if(response.code() == 404) errorCode = 404;
                         status.postValue(Status.wrong);
                         return;
                     }

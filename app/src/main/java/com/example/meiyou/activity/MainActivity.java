@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -44,13 +43,16 @@ public class MainActivity extends AppCompatActivity {
             if(integer == GlobalData.SIG_POST_SEND){
                 switchToPostList(true);
             }
+            if(integer == GlobalData.SIG_POST_DELETE){
+                switchToPostList(true);
+            }
         });
     }
 
     public void switchToPostList(boolean ifFresh){
         View view = navView.findViewById(R.id.navigation_viewPost);
         view.performClick();
-        GlobalData.sig_fresh.postValue(GlobalData.SIG_FRESH_IDLE);
+        GlobalData.sig_to_home.postValue(GlobalData.SIG_TO_HOME_IDLE);
     }
 
 }

@@ -2,6 +2,7 @@ package com.example.meiyou.fragment;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Telephony;
@@ -9,10 +10,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,7 +26,9 @@ import com.example.meiyou.databinding.FragmentDraftlistBinding;
 import com.example.meiyou.databinding.FragmentPostlistBinding;
 import com.example.meiyou.model.DraftList;
 import com.example.meiyou.model.Post;
+import com.example.meiyou.model.UserBanSender;
 import com.example.meiyou.utils.GlobalData;
+import com.example.meiyou.utils.NetworkBasic;
 
 public class DraftListFragment extends Fragment {
     FragmentDraftlistBinding binding;
@@ -93,9 +98,24 @@ public class DraftListFragment extends Fragment {
             for(int i=startIndex;i<draftList.len();i++) {
                 PostViewAdapter.PostInfo postInfo = PostViewAdapter.PostInfo
                         .fromPost(draftList.get(i));
+                postInfo.getPost().uid  = GlobalData.getUser().uid;
                 postInfo.setStyle(PostViewAdapter.STYLE_NOT_PUBLISHED);
-                mAdapter.addPost(postInfo);
+                mAdapter.addPost(i, postInfo);
             }
+        });
+
+        mAdapter.setOnClickedDelete(postInfo -> {
+            AlertDialog alert=new AlertDialog.Builder(this.getActivity()).create();
+            alert.setTitle("删除草稿");
+            alert.setMessage("确认要删除草稿吗？（删除后无法恢复）");
+            alert.setButton(DialogInterface.BUTTON_NEGATIVE, "取消", ((dialogInterface, i) -> {
+                return;
+            }));
+            alert.setButton(DialogInterface.BUTTON_POSITIVE, "确定", ((dialogInterface, i) -> {
+                draftList.remove(postInfo.getPost());
+                draftList.saveToFile();
+            }));
+            alert.show();
         });
 
         load();

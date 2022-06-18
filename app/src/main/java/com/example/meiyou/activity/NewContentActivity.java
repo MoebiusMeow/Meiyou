@@ -65,11 +65,17 @@ public class NewContentActivity extends AppCompatActivity {
     Uri imageUri = null;
 
     private int nSelected = 0;
+    private String pos = null;
+
+
+    private int pid = 0;
 
     public static final String ACTION_TYPE = "com.Meiyou.newContent.actionType",
         POST_DATA = "com.Meiyou.newContent.postData",
         POST_ID = "com.Meiyou.newContent.postID",
-        POST_SAVED = "com.Meiyou.newContent.postSaved";
+        POST_SAVED = "com.Meiyou.newContent.postSaved",
+        POST_CONTENT_PID = "com.Meiyou.newContent.contentPid",
+        POST_CONTENT_TYPE = "com.Meiyou.newContent.type";
     public static final int ACTION_SAVE = 0, ACTION_POST = 1;
 
 
@@ -78,6 +84,27 @@ public class NewContentActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding  = ActivityNewcontentBinding.inflate(getLayoutInflater());
+
+        Intent intent_parse_in = getIntent();
+        pid = intent_parse_in.getIntExtra(POST_CONTENT_PID, 0);
+        Log.d("Reply", "onCreate: "+pid);
+        if(pid > 0 ){
+            binding.textNewContentTitle.setText("回复#"+pid);
+            binding.editTextTitle.setText("");
+            binding.editTextTitle.setVisibility(View.GONE);
+            binding.editTextContent.setText("回复正文...");
+        }
+        else{
+            binding.textNewContentTitle.setText("新帖子");
+        }
+
+        binding.textViewPos.setVisibility(View.GONE);
+        binding.imageViewDeletePos.setVisibility(View.GONE);
+        binding.imageViewDeletePos.setOnClickListener(view -> {
+            pos = null;
+            binding.textViewPos.setVisibility(View.GONE);
+            binding.imageViewDeletePos.setVisibility(View.GONE);
+        });
 
         // Get Intent message
         Post post = (Post) getIntent().getSerializableExtra(POST_SAVED);
@@ -160,11 +187,17 @@ public class NewContentActivity extends AppCompatActivity {
                         if (data != null){
                             try {
                                 Log.d("mmu", data.getStringExtra("address"));
-                                binding.editTextContent.append(
+                                /*binding.editTextContent.append(
                                         "[" + data.getStringExtra("address") + " " +
                                         "(" + data.getStringExtra("latitude") +
                                         ", " + data.getStringExtra("longitude") +
                                         ")]");
+                                 */
+                                pos = data.getStringExtra("address");
+                                binding.textViewPos.setText(pos);
+                                binding.textViewPos.setVisibility(View.VISIBLE);
+                                binding.imageViewDeletePos.setVisibility(View.VISIBLE);
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -316,7 +349,7 @@ public class NewContentActivity extends AppCompatActivity {
                     Toast.makeText(this, "发送失败，请稍后再试", Toast.LENGTH_SHORT).show();
                 }
             });
-            postSender.send_post();
+            postSender.send_post(pid<=0);
         });
 
 
@@ -442,6 +475,8 @@ public class NewContentActivity extends AppCompatActivity {
         post.content = binding.editTextContent.getText().toString();
         post.res_type = attachedFiletype;
         post.uid = GlobalData.getUser().uid;
+        post.pid = this.pid;
+        post.pos = this.pos;
         Log.d("TAG", "buildPost: res_type="+post.res_type);
         if(attachedFiletype != GlobalData.FILE_TYPE_NONE && attachedFiletype != GlobalData.FILE_TYPE_NONE){
             post.res_ids = (ArrayList<Integer>) resIDList.clone();

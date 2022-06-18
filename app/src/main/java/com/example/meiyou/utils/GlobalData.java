@@ -34,10 +34,13 @@ public class GlobalData extends Application {
 
     // Used to notify main activity to switch to post list fragment when new post send
     public static MutableLiveData<Integer> sig_post = new MutableLiveData<>();
-    public static final Integer SIG_POST_SEND = 1, SIG_POST_NOTHING = 0;
+    public static final Integer SIG_POST_SEND = 1, SIG_POST_NOTHING = 0, SIG_POST_DELETE = 2;
 
-    public static MutableLiveData<Integer> sig_fresh = new MutableLiveData<>();
-    public static final Integer SIG_FRESH_DO = 1, SIG_FRESH_IDLE = 0;
+    public static MutableLiveData<Integer> sig_refresh = new MutableLiveData<>();
+    public static final Integer SIG_FORCE_REFRESH = 1, SIG_NO_REFRESH = 0;
+
+    public static MutableLiveData<Integer> sig_to_home = new MutableLiveData<>();
+    public static final Integer SIG_TO_HOME_DO = 1, SIG_TO_HOME_IDLE = 0;
 
 
     @Override
@@ -45,6 +48,7 @@ public class GlobalData extends Application {
         super.onCreate();
         context=getApplicationContext();
         draftList = new DraftList(new File(getFilesDir(), "drafts.data"));
+        sig_refresh.postValue(SIG_NO_REFRESH);
     }
     public static Context getContext(){return context;}
     public static MainUser getUser(){
