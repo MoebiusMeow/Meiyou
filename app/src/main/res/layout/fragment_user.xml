@@ -125,6 +125,18 @@
             app:layout_constraintBottom_toBottomOf="@+id/imageUserUserProfile"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <Button
+            android:id="@+id/buttonFollow2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="@color/pink_500"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:text="关注列表"
+            app:layout_constraintBottom_toTopOf="@+id/buttonFollow"
+            app:layout_constraintEnd_toEndOf="parent" />
+
         <ImageView
             android:id="@+id/imageUserUserProfile"
             android:layout_width="100dp"

@@ -7,11 +7,13 @@ import okhttp3.HttpUrl;
 
 public class UserBanSender extends NetworkBasic {
     private int uid = 0;
+    public boolean flag;
     public UserBanSender(int uid){
         this.uid = uid;
     }
-    public void setBan(boolean flag){
+    public UserBanSender setBan(boolean flag){
         status.postValue(Status.idle);
+        this.flag = flag;
         HttpUrl.Builder urlBuilder = HttpUrl.parse(
                 flag? NetworkConstant.addBanUrl: NetworkConstant.removeBanUrl
         ).newBuilder()
@@ -25,5 +27,6 @@ public class UserBanSender extends NetworkBasic {
                     status.postValue(Status.success);
                 }
         ));
+        return this;
     }
 }

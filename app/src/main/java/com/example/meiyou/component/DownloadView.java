@@ -109,6 +109,7 @@ public class DownloadView extends ConstraintLayout {
 
     public void setAudioUri(Uri uri) {
         player = new MediaPlayer();
+        player.reset();
         imageView.addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
             @Override
             public void onViewAttachedToWindow(View view) {
@@ -123,7 +124,10 @@ public class DownloadView extends ConstraintLayout {
             }
         });
         player.setOnPreparedListener(mediaPlayer -> {
-            controller = new MediaController(this.getContext());
+            if (controller == null)
+                controller = new MediaController(this.getContext());
+            else
+                return;
             imageView.setFocusable(true);
             imageView.setOnClickListener(view -> {
                 try {
@@ -136,7 +140,7 @@ public class DownloadView extends ConstraintLayout {
             controller.setAnchorView(imageView);
             controller.setMediaPlayer(new MediaController.MediaPlayerControl() {
                 @Override public void start() { player.start(); }
-                @Override public void pause() { player.stop(); }
+                @Override public void pause() { player.pause(); }
                 @Override public int getDuration() { return player.getDuration(); }
                 @Override public int getCurrentPosition() { return player.getCurrentPosition(); }
                 @Override public void seekTo(int i) { player.seekTo(i); }
@@ -171,7 +175,7 @@ public class DownloadView extends ConstraintLayout {
     }
 
     public void doPause() {
-        if (player != null) {
+        if (player != null && controller != null) {
             player.pause();
         }
     }
@@ -179,8 +183,10 @@ public class DownloadView extends ConstraintLayout {
     public void clear() {
         if (controller != null) {
             controller.hide();
-            player.release();
             controller = null;
+        }
+        if (player != null) {
+            player.release();
             player = null;
         }
     }
@@ -205,6 +211,7 @@ public class DownloadView extends ConstraintLayout {
 
     public void finalize()
     {
+        detachAllViewsFromParent();
         clear();
     }
 }

@@ -7,11 +7,13 @@ import okhttp3.HttpUrl;
 
 public class UserFollowSender extends NetworkBasic {
     private int uid = 0;
+    public boolean flag;
     public UserFollowSender(int uid){
         this.uid = uid;
     }
-    public void setFollow(boolean flag){
+    public UserFollowSender setFollow(boolean flag){
         status.postValue(Status.idle);
+        this.flag = flag;
         HttpUrl.Builder urlBuilder = HttpUrl.parse(
                 flag? NetworkConstant.addFollowUrl: NetworkConstant.removeFollowUrl
         ).newBuilder()
@@ -25,5 +27,6 @@ public class UserFollowSender extends NetworkBasic {
                     status.postValue(Status.success);
                 }
         ));
+        return this;
     }
 }

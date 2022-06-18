@@ -16,8 +16,12 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainer;
 import androidx.fragment.app.FragmentManager;
@@ -27,6 +31,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.meiyou.R;
 import com.example.meiyou.activity.EditUserInfoActivity;
+import com.example.meiyou.activity.FollowActivity;
+import com.example.meiyou.activity.SinglePostActivity;
 import com.example.meiyou.component.PostViewAdapter;
 import com.example.meiyou.databinding.FragmentUserBinding;
 import com.example.meiyou.model.MainUser;
@@ -45,6 +51,8 @@ public class UserFragment extends Fragment {
 
     private int uid = 0;
     private User user = null;
+
+    private ActivityResultLauncher<Intent> followListLauncher, messagesLauncher;
 
     public UserFragment(){
 
@@ -140,6 +148,15 @@ public class UserFragment extends Fragment {
                 }
             });
             followSender.setFollow(!user.followed);
+        });
+
+        followListLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+
+        });
+
+        binding.buttonFollow2.setOnClickListener(view1 -> {
+            Intent intent = new Intent(getActivity(), FollowActivity.class);
+            followListLauncher.launch(intent);
         });
 
         binding.buttonSetBan.setOnClickListener(view1 -> {
