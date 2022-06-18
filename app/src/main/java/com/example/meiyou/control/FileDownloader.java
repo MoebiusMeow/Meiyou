@@ -30,7 +30,7 @@ public class FileDownloader extends NetworkBasic {
                             GlobalData.getContext().getCacheDir());
                     BufferedSink sink = Okio.buffer(Okio.sink(outputFile));
 
-                    Log.d("meow", temp.toString());
+                    Log.d("meownn", temp[0]);
                     sink.writeAll(response1.body().source());
                     sink.close();
                     result = Uri.fromFile(outputFile);

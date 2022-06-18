@@ -337,6 +337,10 @@ public class PostViewAdapter extends
             if(mType == TYPE_TAIL){
                 loadMoreAction.Onclick();
             } else if (mType != TYPE_EMPTY_TAIL) {
+                for (int i = 0; i < attatchedViewList.size(); i++) {
+                    DownloadView downloadView = attatchedViewList.get(i);
+                    downloadView.doPause();
+                }
                 clickedPostcardAction.Onclick(this.postInfo);
             }
         }

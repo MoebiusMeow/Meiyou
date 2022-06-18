@@ -8,6 +8,7 @@ import static com.example.meiyou.utils.GlobalData.FILE_TYPE_NONE;
 import static com.example.meiyou.utils.GlobalData.SIG_FORCE_REFRESH;
 import static com.example.meiyou.utils.GlobalData.SIG_POST_DELETE;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -205,8 +206,10 @@ public class PostListFragment extends Fragment {
         postListModel.pull_post(N_POST_GET, mode, false);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void refresh(){
         mAdapter.clear();
+        binding.recycleView.removeAllViews();
         postListModel.clear();
         binding.progressBar2.setVisibility(View.VISIBLE);
         postListModel.pull_post(N_POST_GET, mode, true);

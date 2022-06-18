@@ -108,32 +108,31 @@ public class DownloadView extends ConstraintLayout {
     }
 
     public void setAudioUri(Uri uri) {
-        controller = new MediaController(this.getContext());
         player = new MediaPlayer();
+        imageView.addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
+            @Override
+            public void onViewAttachedToWindow(View view) {
+            }
+
+            @Override
+            public void onViewDetachedFromWindow(View view) {
+                controller.hide();
+                if (player.isPlaying()) {
+                    player.pause();
+                }
+            }
+        });
         player.setOnPreparedListener(mediaPlayer -> {
+            controller = new MediaController(this.getContext());
             imageView.setFocusable(true);
             imageView.setOnClickListener(view -> {
-                imageView.requestFocus();
-                controller.show();
-            });
-            imageView.setOnFocusChangeListener((view, b) -> {
-                if (!b) {
-                    Log.d("meow", "out");
+                try {
+                    controller.show();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             });
-            imageView.addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
-                @Override
-                public void onViewAttachedToWindow(View view) {
-                }
 
-                @Override
-                public void onViewDetachedFromWindow(View view) {
-                    controller.hide();
-                    if (player.isPlaying()) {
-                        player.pause();
-                    }
-                }
-            });
             controller.setAnchorView(imageView);
             controller.setMediaPlayer(new MediaController.MediaPlayerControl() {
                 @Override public void start() { player.start(); }
@@ -169,6 +168,12 @@ public class DownloadView extends ConstraintLayout {
     public void hideMask(){
         mask.setVisibility(INVISIBLE);
         progressBar.setVisibility(INVISIBLE);
+    }
+
+    public void doPause() {
+        if (player != null) {
+            player.pause();
+        }
     }
 
     public void clear() {
