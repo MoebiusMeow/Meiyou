@@ -7,7 +7,7 @@
     tools:context=".activity.SinglePostActivity">
 
 
-    <fragment
+    <FrameLayout
         android:id="@+id/fragmentUser"
         android:name="com.example.meiyou.fragment.PostListFragment"
         android:layout_width="0dp"

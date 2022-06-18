@@ -94,7 +94,7 @@ public class DraftListFragment extends Fragment {
                 PostViewAdapter.PostInfo postInfo = PostViewAdapter.PostInfo
                         .fromPost(draftList.get(i));
                 postInfo.setStyle(PostViewAdapter.STYLE_NOT_PUBLISHED);
-                mAdapter.addPost(postInfo);
+                mAdapter.addPost(i, postInfo);
             }
         });
 

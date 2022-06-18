@@ -1,6 +1,7 @@
 package com.example.meiyou.fragment;
 
 import static android.app.Activity.RESULT_OK;
+import static com.example.meiyou.model.Post.TYPE_HEAD_POST;
 import static com.example.meiyou.model.PostList.MODE_SINGLE_POST;
 import static com.example.meiyou.model.PostList.MODE_USER_FIX;
 import static com.example.meiyou.utils.GlobalData.FILE_TYPE_NONE;
@@ -35,6 +36,7 @@ import com.example.meiyou.utils.GlobalResFileManager;
 import com.example.meiyou.utils.NetworkBasic;
 
 import java.util.ArrayList;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class PostListFragment extends Fragment {
     protected FragmentPostlistBinding binding;
@@ -90,6 +92,7 @@ public class PostListFragment extends Fragment {
 
         // on Post list get
         postListModel.status.observe(getViewLifecycleOwner(), status -> {
+
             binding.progressBar2.setVisibility(View.INVISIBLE);
             if(status == NetworkBasic.Status.fail ){
                 Toast.makeText(getActivity(), "糟糕，网络好像不太通畅..", Toast.LENGTH_SHORT).show();
@@ -109,7 +112,9 @@ public class PostListFragment extends Fragment {
                             +" end="+postListModel.len());
                 for(int i = postListModel.new_start; i< postListModel.len(); i++){
                     Post post = postListModel.get(i);
-                    mAdapter.addPost(PostViewAdapter.PostInfo.fromPost(post));
+                    if(post.type == TYPE_HEAD_POST)
+                        mAdapter.clear();
+                    mAdapter.addPost(i, PostViewAdapter.PostInfo.fromPost(post));
 
                     // Download user profile
                     if(post.profile_id >= 0) {

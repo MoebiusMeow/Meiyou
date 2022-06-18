@@ -335,12 +335,17 @@ public class PostViewAdapter extends
         notifyDataSetChanged();
     }
 
-    public void addPost(PostInfo newPost){
-        Log.d("TAG", "addPost: id="+newPost.getPost().pid);
-        PostInfo mLastHolder = postInfoList.getLast();
-        postInfoList.removeLast();
-        postInfoList.addLast(newPost);
-        postInfoList.addLast(mLastHolder);
+    public void addPost(int index, PostInfo newPost){
+        if(index < postInfoList.size()-1){
+            postInfoList.set(index, newPost);
+        }
+        else {
+            Log.d("TAG", "addPost: id=" + newPost.getPost().pid);
+            PostInfo mLastHolder = postInfoList.getLast();
+            postInfoList.removeLast();
+            postInfoList.addLast(newPost);
+            postInfoList.addLast(mLastHolder);
+        }
         notifyDataSetChanged();
     }
 
