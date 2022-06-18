@@ -5,6 +5,7 @@ import static android.app.Activity.RESULT_OK;
 
 import static com.example.meiyou.model.PostList.MODE_USER_FIX;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainer;
 import androidx.fragment.app.FragmentManager;
@@ -31,6 +33,7 @@ import com.example.meiyou.model.MainUser;
 import com.example.meiyou.model.Post;
 import com.example.meiyou.model.PostList;
 import com.example.meiyou.model.User;
+import com.example.meiyou.model.UserBanSender;
 import com.example.meiyou.model.UserFollowSender;
 import com.example.meiyou.utils.GlobalData;
 import com.example.meiyou.utils.GlobalResFileManager;
@@ -74,7 +77,9 @@ public class UserFragment extends Fragment {
         }
         if(uid == GlobalData.getUser().uid){
             binding.buttonFollow.setVisibility(View.INVISIBLE);
+            binding.buttonSetBan.setVisibility(View.INVISIBLE);
         }
+        binding.textBanned.setVisibility(View.INVISIBLE);
 
         binding.imageUserUserProfile.setImageResource(R.drawable.user_profile_default);
         setUiFollowed(false);
@@ -135,6 +140,32 @@ public class UserFragment extends Fragment {
                 }
             });
             followSender.setFollow(!user.followed);
+        });
+
+        binding.buttonSetBan.setOnClickListener(view1 -> {
+            AlertDialog alert=new AlertDialog.Builder(this.getActivity()).create();
+            alert.setTitle("屏蔽用户");
+            alert.setMessage("确认要屏蔽该用户吗？（屏蔽后无法看到该用户的发帖、回复，可以在个人设置中恢复）");
+            alert.setButton(DialogInterface.BUTTON_NEGATIVE, "取消", ((dialogInterface, i) -> {
+                return;
+            }));
+            alert.setButton(DialogInterface.BUTTON_POSITIVE, "确定", ((dialogInterface, i) -> {
+                UserBanSender banSender = new UserBanSender(user.uid);
+                banSender.status.observe(getViewLifecycleOwner(), status -> {
+                    if(status == NetworkBasic.Status.fail || status == NetworkBasic.Status.wrong){
+                        Toast.makeText(getActivity(), "操作失败，请稍后重试", Toast.LENGTH_SHORT).show();
+                    }
+                    if(status == NetworkBasic.Status.success){
+                        getActivity().setResult(RESULT_OK);
+                        Toast.makeText(getActivity(), "屏蔽成功", Toast.LENGTH_SHORT).show();
+                        postListFragment.refresh();
+                        binding.buttonSetBan.setVisibility(View.GONE);
+                        binding.textBanned.setVisibility(View.VISIBLE);
+                    }
+                });
+                banSender.setBan(true);
+            }));
+            alert.show();
         });
 
 
