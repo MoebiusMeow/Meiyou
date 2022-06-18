@@ -73,6 +73,7 @@ public class UserFragment extends Fragment {
             binding.buttonReturnUserPage.setOnClickListener(view1 ->{
                 getActivity().finish();
             });
+            binding.buttonEditProfile.setVisibility(View.GONE);
             Log.d("USERINFO", "onCreateView: uid="+uid);
         }
         if(uid == GlobalData.getUser().uid){
