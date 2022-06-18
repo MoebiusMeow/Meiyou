@@ -115,6 +115,9 @@ public class PostListFragment extends Fragment {
                     Post post = postListModel.get(i);
                     if(post.type == TYPE_HEAD_POST)
                         mAdapter.clear();
+                    if(mode == MODE_SINGLE_POST && i == 0)
+                        post.type = TYPE_HEAD_POST;
+
                     mAdapter.addPost(i, PostViewAdapter.PostInfo.fromPost(post));
 
                     // Download user profile
