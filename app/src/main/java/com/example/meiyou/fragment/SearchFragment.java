@@ -10,19 +10,19 @@ import androidx.fragment.app.Fragment;
 
 import com.example.meiyou.R;
 import com.example.meiyou.activity.SearchPostActivity;
-import com.example.meiyou.databinding.FragmentMessageBinding;
 import com.example.meiyou.databinding.FragmentNewpostBinding;
+import com.example.meiyou.databinding.FragmentSearchBinding;
 
-public class MessageFragment extends Fragment {
+public class SearchFragment extends Fragment {
 
-    FragmentMessageBinding binding;
-    public MessageFragment(){
+    FragmentSearchBinding binding;
+    public SearchFragment(){
 
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentMessageBinding.inflate(inflater, container, false);
+        binding = FragmentSearchBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
         binding.buttonStartSearch.setOnClickListener(view1->{

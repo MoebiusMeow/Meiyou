@@ -18,7 +18,6 @@
         <entry key="..\:/Users/Lenovo/AndroidStudioProjects/Meiyou/app/src/main/res/layout/fragment_draftlist.xml" value="0.17603850050658562" />
         <entry key="..\:/Users/Lenovo/AndroidStudioProjects/Meiyou/app/src/main/res/layout/fragment_follow.xml" value="0.33" />
         <entry key="..\:/Users/Lenovo/AndroidStudioProjects/Meiyou/app/src/main/res/layout/fragment_look_mine.xml" value="0.358695652173913" />
-
         <entry key="..\:/work/2022spring/MobileApp/Meiyou/app/src/main/res/drawable/address.xml" value="0.1" />
         <entry key="..\:/work/2022spring/MobileApp/Meiyou/app/src/main/res/drawable/address_small.xml" value="0.1" />
         <entry key="..\:/work/2022spring/MobileApp/Meiyou/app/src/main/res/drawable/edit.xml" value="0.1325" />
@@ -32,11 +31,12 @@
         <entry key="..\:/work/2022spring/MobileApp/Meiyou/app/src/main/res/layout/activity_single_post.xml" value="0.22" />
         <entry key="..\:/work/2022spring/MobileApp/Meiyou/app/src/main/res/layout/activity_user_page.xml" value="0.18490374873353596" />
         <entry key="..\:/work/2022spring/MobileApp/Meiyou/app/src/main/res/layout/component_download_progress.xml" value="0.11778115501519756" />
-        <entry key="..\:/work/2022spring/MobileApp/Meiyou/app/src/main/res/layout/component_postcard.xml" value="0.4819277108433735" />
+        <entry key="..\:/work/2022spring/MobileApp/Meiyou/app/src/main/res/layout/component_postcard.xml" value="0.7333333333333334" />
         <entry key="..\:/work/2022spring/MobileApp/Meiyou/app/src/main/res/layout/component_upload_progress.xml" value="0.22" />
         <entry key="..\:/work/2022spring/MobileApp/Meiyou/app/src/main/res/layout/fragment_message.xml" value="0.3333333333333333" />
         <entry key="..\:/work/2022spring/MobileApp/Meiyou/app/src/main/res/layout/fragment_newpost.xml" value="0.22" />
         <entry key="..\:/work/2022spring/MobileApp/Meiyou/app/src/main/res/layout/fragment_postlist.xml" value="0.14564336372847012" />
+        <entry key="..\:/work/2022spring/MobileApp/Meiyou/app/src/main/res/layout/fragment_search.xml" value="0.2826086956521739" />
         <entry key="..\:/work/2022spring/MobileApp/Meiyou/app/src/main/res/layout/fragment_user.xml" value="0.3333333333333333" />
         <entry key="..\:/work/2022spring/MobileApp/Meiyou/app/src/main/res/layout/sample_downloa_view.xml" value="0.3333333333333333" />
       </map>
