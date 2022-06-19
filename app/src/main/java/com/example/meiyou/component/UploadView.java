@@ -1,6 +1,7 @@
 package com.example.meiyou.component;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -57,6 +58,14 @@ public class UploadView extends RelativeLayout {
     public void setImageUri(Uri uri) {
         imageView.setImageURI(uri);
         Log.d("TAG", "setImageUri: Set!");
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        imageView.setImageBitmap(bitmap);
+    }
+
+    public void setResource(int id) {
+        imageView.setImageResource(id);
     }
 
     public void setProgressBar(float progress){

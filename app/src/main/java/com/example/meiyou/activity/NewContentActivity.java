@@ -3,6 +3,7 @@ package com.example.meiyou.activity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -253,8 +254,8 @@ public class NewContentActivity extends AppCompatActivity {
 
         binding.buttonAddVideo.setOnClickListener(view -> {
 
-            if(nSelected >=1){
-                Toast.makeText(this, "最多上传1张图片哦~", Toast.LENGTH_SHORT).show();
+            if(nSelected >= 1){
+                Toast.makeText(this, "最多上传1个视频哦~", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -296,9 +297,8 @@ public class NewContentActivity extends AppCompatActivity {
             builder.setItems(choices, (dialog, which) -> {
                 // Select local
                 if(which == 0){
-                    Intent intent = new Intent();
-                    intent.setType("audio/*");
-                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
+                    //intent.setType("audio/*");
                     activityAudioSelectLauncher.launch(intent);
                 }
                 // Shoot video
@@ -410,7 +410,14 @@ public class NewContentActivity extends AppCompatActivity {
         // put a uploading view
         UploadView uploadView = new UploadView(this, this);
         uploadView.setName(fileNameDisplay);
-        uploadView.setImageUri(uri);
+        if (fileType.equals("/image"))
+            uploadView.setImageUri(uri);
+        else if (fileType.equals("/video")) {
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(getBaseContext(), uri);
+            uploadView.setBitmap(retriever.getFrameAtIndex(0));
+        } else
+            uploadView.setResource(R.drawable.music);
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;
         params.rowSpec = GridLayout.spec((int)(nSelected/3),1,1f);
@@ -422,7 +429,7 @@ public class NewContentActivity extends AppCompatActivity {
 
         // Bind upload finish callback
         fileUploader.status.observe(this, status -> {
-            Log.d("meow", status.toString());
+            //Log.d("meow", status.toString());
             if (status == NetworkBasic.Status.success) {
                 uploadView.setProgressBar(2.0f);
                 resIDList.add(fileUploader.result_res_id);
@@ -433,7 +440,7 @@ public class NewContentActivity extends AppCompatActivity {
         });
 
         // Send
-        Log.d("TAG", "doUpload: "+ uri.getPath());
+        //Log.d("TAG", "doUpload: "+ uri.getPath());
         Call call = fileUploader.put(uri, fileType, uploadView::setProgressBar);
 
         //On Cancel uploading or uploaded file

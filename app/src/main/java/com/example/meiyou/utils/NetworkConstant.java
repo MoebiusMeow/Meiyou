@@ -43,6 +43,7 @@ public class NetworkConstant extends Activity {
     public static final String searchPostUrl = serverUrl + "/search";
 
 
+
     /* Method to build http Call */
     public static final OkHttpClient client = new OkHttpClient.Builder()
             //.callTimeout(3, TimeUnit.SECONDS)

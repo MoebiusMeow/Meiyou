@@ -33,6 +33,9 @@
             android:name=".activity.SearchPostActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.FollowActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.UserPageActivity"
             android:exported="false" />
         <activity
@@ -62,12 +65,12 @@
             android:name=".activity.LoginActivity"
             android:exported="true">
             <intent-filter>
-                `
+
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            `
+
         </activity>
 
         <provider

@@ -40,7 +40,6 @@ public class LocationActivity extends AppCompatActivity {
                 callback.invoke(origin, true, false);
             }
         });
-        //webView.getSettings().setGeolocationDatabasePath( this.getFilesDir().getPath() );
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -48,18 +47,17 @@ public class LocationActivity extends AppCompatActivity {
                     view.loadUrl(url);
                 } else {
                     try {
-                        String decode = URLDecoder.decode(url, "UTF-8");
-                        Uri uri = Uri.parse(decode);
-
-                        String[] latng = uri.getQueryParameter("latng").split(",");
+                        Uri uri = Uri.parse(URLDecoder.decode(url, "UTF-8"));
                         String address = uri.getQueryParameter("name");
-                        if (address.equals("我的位置")){
+                        if (address.equals("我的位置")) {
                             address = uri.getQueryParameter("addr");
                         }
                         Intent intent = new Intent();
                         intent.putExtra("address", address);
-                        intent.putExtra("latitude",latng[0]);
-                        intent.putExtra("longitude",latng[1]);
+                        intent.putExtra("latitude",
+                                uri.getQueryParameter("latng").split(",")[0]);
+                        intent.putExtra("longitude",
+                                uri.getQueryParameter("latng").split(",")[1]);
                         setResult(RESULT_OK, intent);
                         finish();
                     } catch (UnsupportedEncodingException e) {

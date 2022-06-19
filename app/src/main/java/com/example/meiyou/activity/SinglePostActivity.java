@@ -65,6 +65,7 @@ public class SinglePostActivity extends AppCompatActivity {
                 });
 
         binding.buttonReturnSinglePost.setOnClickListener(view->{
+            binding.fragmentUser.removeAllViews();
             setResult(RESULT_CANCELED);
             finish();
         });
@@ -89,5 +90,10 @@ public class SinglePostActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

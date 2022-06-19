@@ -5,10 +5,20 @@
       <map>
         <entry key="..\:/Users/Lenovo/AndroidStudioProjects/Meiyou/app/src/main/res/drawable/ic_launcher_background.xml" value="0.214" />
         <entry key="..\:/Users/Lenovo/AndroidStudioProjects/Meiyou/app/src/main/res/layout-w1240dp/activity_login.xml" value="0.23259705488621152" />
+        <entry key="..\:/Users/Lenovo/AndroidStudioProjects/Meiyou/app/src/main/res/layout/activity_edit_user_info.xml" value="0.1947463768115942" />
+        <entry key="..\:/Users/Lenovo/AndroidStudioProjects/Meiyou/app/src/main/res/layout/activity_follow.xml" value="0.22" />
+        <entry key="..\:/Users/Lenovo/AndroidStudioProjects/Meiyou/app/src/main/res/layout/activity_location.xml" value="0.14351851851851852" />
         <entry key="..\:/Users/Lenovo/AndroidStudioProjects/Meiyou/app/src/main/res/layout/activity_login.xml" value="0.358695652173913" />
         <entry key="..\:/Users/Lenovo/AndroidStudioProjects/Meiyou/app/src/main/res/layout/activity_main.xml" value="0.358695652173913" />
+        <entry key="..\:/Users/Lenovo/AndroidStudioProjects/Meiyou/app/src/main/res/layout/activity_newcontent.xml" value="0.25" />
+        <entry key="..\:/Users/Lenovo/AndroidStudioProjects/Meiyou/app/src/main/res/layout/activity_single_post.xml" value="0.22" />
+        <entry key="..\:/Users/Lenovo/AndroidStudioProjects/Meiyou/app/src/main/res/layout/component_download_progress.xml" value="0.17603850050658562" />
         <entry key="..\:/Users/Lenovo/AndroidStudioProjects/Meiyou/app/src/main/res/layout/component_postcard.xml" value="0.358695652173913" />
+        <entry key="..\:/Users/Lenovo/AndroidStudioProjects/Meiyou/app/src/main/res/layout/component_upload_progress.xml" value="0.21" />
+        <entry key="..\:/Users/Lenovo/AndroidStudioProjects/Meiyou/app/src/main/res/layout/fragment_draftlist.xml" value="0.17603850050658562" />
+        <entry key="..\:/Users/Lenovo/AndroidStudioProjects/Meiyou/app/src/main/res/layout/fragment_follow.xml" value="0.33" />
         <entry key="..\:/Users/Lenovo/AndroidStudioProjects/Meiyou/app/src/main/res/layout/fragment_look_mine.xml" value="0.358695652173913" />
+
         <entry key="..\:/work/2022spring/MobileApp/Meiyou/app/src/main/res/drawable/address.xml" value="0.1" />
         <entry key="..\:/work/2022spring/MobileApp/Meiyou/app/src/main/res/drawable/address_small.xml" value="0.1" />
         <entry key="..\:/work/2022spring/MobileApp/Meiyou/app/src/main/res/drawable/edit.xml" value="0.1325" />

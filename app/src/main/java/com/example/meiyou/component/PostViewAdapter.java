@@ -1,26 +1,25 @@
 package com.example.meiyou.component;
 
 import static com.example.meiyou.model.Post.TYPE_HEAD_POST;
-import static com.example.meiyou.model.Post.TYPE_POST;
 import static com.example.meiyou.model.Post.TYPE_REPLY;
+import static com.example.meiyou.utils.GlobalData.FILE_TYPE_AUD;
 import static com.example.meiyou.utils.GlobalData.FILE_TYPE_IMG;
 import static com.example.meiyou.utils.GlobalData.FILE_TYPE_NONE;
 import static com.example.meiyou.utils.GlobalData.FILE_TYPE_VID;
+import static com.example.meiyou.utils.GlobalData.getContext;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.gridlayout.widget.GridLayout;
-import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.meiyou.R;
@@ -266,7 +265,16 @@ public class PostViewAdapter extends
                         attatchedViewList.clear();
                         for (int i = 0; i < n; i++) {
                             DownloadView downloadView = new DownloadView(context);
-                            downloadView.setImageResource(R.drawable.defaultimage);
+                            downloadView.setImageResource(
+                                    type == FILE_TYPE_IMG ? R.drawable.defaultimage :
+                                    type == FILE_TYPE_VID ? R.drawable.video :
+                                    type == FILE_TYPE_AUD ? R.drawable.audio :
+                                    R.drawable.ic_dashboard_black_24dp);
+                            if (type == FILE_TYPE_AUD) {
+                                downloadView.setRatio(0.2f);
+                                downloadView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                            }
+
                             attatchedViewList.add(downloadView);
                             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
                             params.width = 0;
@@ -298,6 +306,11 @@ public class PostViewAdapter extends
                             view.setImageUri(uri);
                         else if (postInfo.post.res_type == FILE_TYPE_VID)
                             view.setVideoUri(uri);
+                        else if (postInfo.post.res_type == FILE_TYPE_AUD) {
+                            view.setImageResource(R.drawable.music);
+                            view.setAudioUri(uri);
+                            //view.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                        }
                     }
                 }
             }
@@ -323,8 +336,11 @@ public class PostViewAdapter extends
         public void onClick(View view) {
             if(mType == TYPE_TAIL){
                 loadMoreAction.Onclick();
-            }
-            else{
+            } else if (mType != TYPE_EMPTY_TAIL) {
+                for (int i = 0; i < attatchedViewList.size(); i++) {
+                    DownloadView downloadView = attatchedViewList.get(i);
+                    downloadView.doPause();
+                }
                 clickedPostcardAction.Onclick(this.postInfo);
             }
         }

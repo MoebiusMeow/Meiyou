@@ -54,6 +54,7 @@ public class NetworkBasic {
                     status.postValue(Status.wrong);
                 }
                 catch(Exception e){
+                    e.printStackTrace();
                     if(this.retry <=0){
                         Log.e("Network", "onResponse: ", e);
                         status.postValue(Status.wrong);
