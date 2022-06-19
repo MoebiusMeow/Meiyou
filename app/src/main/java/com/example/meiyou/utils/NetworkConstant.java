@@ -42,6 +42,8 @@ public class NetworkConstant extends Activity {
     public static final String banListUrl = serverUrl + "/banlist";
     public static final String getMessageUrl = serverUrl + "/getmessage";
     public static final String countUnreadUrl = serverUrl + "/countunread";
+    public static final String searchPostUrl = serverUrl + "/search";
+
 
 
     /* Method to build http Call */

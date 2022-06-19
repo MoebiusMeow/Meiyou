@@ -48,6 +48,7 @@ public class MainUser extends User {
                     token = jsonObject.getString("token");
                     uid = jsonObject.getInt("uid");
                     Log.d("TAG", "login: success");
+                    errorCode = 77889;
                     status.postValue(Status.success);
                 }
         ));

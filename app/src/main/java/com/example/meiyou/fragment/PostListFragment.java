@@ -26,6 +26,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.meiyou.activity.SearchPostActivity;
 import com.example.meiyou.activity.SinglePostActivity;
 import com.example.meiyou.activity.UserPageActivity;
 import com.example.meiyou.component.PostViewAdapter;
@@ -64,6 +65,7 @@ public class PostListFragment extends Fragment {
         Log.d("TAG", ": haode");
     };
     public void setOnRenewCallback(OnRenewCallback action){onRenewCallback = action;}
+    public String getAbstract(){return postListModel.getAbstract();}
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -99,7 +101,7 @@ public class PostListFragment extends Fragment {
                 Toast.makeText(getActivity(), "糟糕，网络好像不太通畅..", Toast.LENGTH_SHORT).show();
             }
             if(status == NetworkBasic.Status.wrong){
-                if(postListModel.errorCode == 404){
+                if(postListModel.errorCode == 404 && mode == MODE_SINGLE_POST){
                     GlobalData.sig_post.postValue(SIG_POST_DELETE);
                     getActivity().finish();
                 }
@@ -115,6 +117,9 @@ public class PostListFragment extends Fragment {
                     Post post = postListModel.get(i);
                     if(post.type == TYPE_HEAD_POST)
                         mAdapter.clear();
+                    if(mode == MODE_SINGLE_POST && i == 0)
+                        post.type = TYPE_HEAD_POST;
+
                     mAdapter.addPost(i, PostViewAdapter.PostInfo.fromPost(post));
 
                     // Download user profile
@@ -221,6 +226,7 @@ public class PostListFragment extends Fragment {
     public void setPostID(int post_id){
         postListModel.setFixPid(post_id);
     }
+    public void setSearchParam(SearchPostActivity.SearchParam param){postListModel.setSearchParam(param);}
 
     public void setOnClickedCard(PostViewAdapter.ClickedPostcardAction callback){
         mAdapter.setOnClickedPost(callback);

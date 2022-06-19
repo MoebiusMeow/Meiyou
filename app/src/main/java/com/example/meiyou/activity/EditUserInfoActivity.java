@@ -93,6 +93,9 @@ public class EditUserInfoActivity extends AppCompatActivity {
                             }
                         }
                     }
+                    else if(result.getResultCode() == RESULT_CANCELED){
+                        setMask(false);
+                    }
                 });
 
 

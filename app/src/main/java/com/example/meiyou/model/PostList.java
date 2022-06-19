@@ -4,6 +4,7 @@ import static com.example.meiyou.model.Post.TYPE_REPLY;
 
 import android.util.Log;
 
+import com.example.meiyou.activity.SearchPostActivity;
 import com.example.meiyou.utils.NetworkBasic;
 import com.example.meiyou.utils.NetworkConstant;
 
@@ -20,10 +21,10 @@ public class PostList extends NetworkBasic {
     public int new_start = 0;
 
     public static final int MODE_NEWEST = 0, MODE_HOT = 1, MODE_FOLLOW = 2, MODE_USER_FIX = 4,
-            MODE_SINGLE_POST = 8;
+            MODE_SINGLE_POST = 8, MODE_SEARCH = 16;
     private int fix_user = 0;
     private int fix_pid = 0;
-    boolean pulling = false;
+    private SearchPostActivity.SearchParam searchParam = null;
 
     public int len(){
         return postList.size();
@@ -36,6 +37,7 @@ public class PostList extends NetworkBasic {
     }
     public void setFixUser(int user){fix_user = user;}
     public void setFixPid(int pid){fix_pid = pid;}
+    public void setSearchParam(SearchPostActivity.SearchParam param){searchParam = param;}
 
     public PostList(){
         super();
@@ -49,6 +51,52 @@ public class PostList extends NetworkBasic {
             should be set to the index of the first(lowest) index of newly pulled posts.
      */
     public void pull_post(int n, int mode, boolean refresh){
+        if(mode == MODE_SEARCH){
+            if(searchParam==null) {
+                Log.d("Search", "pull_post: Search Param Lost");
+                return;
+            }
+            status.postValue(Status.idle);
+            HttpUrl.Builder urlBuilder = HttpUrl.parse(NetworkConstant.searchPostUrl).newBuilder();
+            if(searchParam.pattern_all != null)
+                urlBuilder.addQueryParameter("all", searchParam.pattern_all);
+            if(searchParam.pattern_title != null)
+                urlBuilder.addQueryParameter("title", searchParam.pattern_title);
+            if(searchParam.pattern_content != null)
+                urlBuilder.addQueryParameter("content", searchParam.pattern_content);
+            if(searchParam.pattern_user != null)
+                urlBuilder.addQueryParameter("user", searchParam.pattern_user);
+            if(!searchParam.if_text)
+                urlBuilder.addQueryParameter("no_text", "True");
+            if(!searchParam.if_image)
+                urlBuilder.addQueryParameter("no_image", "True");
+            if(!searchParam.if_video)
+                urlBuilder.addQueryParameter("no_video", "True");
+            if(!searchParam.if_audio)
+                urlBuilder.addQueryParameter("no_audio", "True");
+            NetworkConstant.get(urlBuilder.build().toString(), true, getCommonNetworkCallback(
+                    response -> {
+                        if (response.code() != 200) {
+                            if(response.code() == 404) {errorCode = 404; return;}
+                            JSONObject jsonObject = new JSONObject(response.body().string());
+                            Log.d("Search", "pull_post: error_msg="+jsonObject.getString("message"));
+                            status.postValue(Status.wrong);
+                            return;
+                        }
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        JSONArray postArray = jsonObject.getJSONArray("posts");
+                        new_start = len();
+                        for (int i = 0; i < postArray.length(); i++) {
+                            JSONObject postObj = postArray.getJSONObject(i);
+                            Post post = new Post();
+                            post.loadFromJson(postObj, false);
+                            post.searchParam = this.searchParam;
+                            postList.add(post);
+                        }
+                        status.postValue(Status.success);
+                    }));
+            return;
+        }
         if(mode == MODE_SINGLE_POST){
             Log.d("SINGLE-POST", "pull_post: pid="+fix_pid+" len="+len());
             if(fix_pid == 0)return;
@@ -140,6 +188,14 @@ public class PostList extends NetworkBasic {
                     status.postValue(Status.success);
                 }
         ));
+    }
+
+    public String getAbstract(){
+        if(len()>=1){
+            Post post_head = postList.get(0);
+            return "#" + post_head.pid+" "+post_head.title+" "+post_head.content;
+        }
+        return "";
     }
 
 }
