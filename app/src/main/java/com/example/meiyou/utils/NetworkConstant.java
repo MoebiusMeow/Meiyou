@@ -34,6 +34,17 @@ public class NetworkConstant extends Activity {
     public static final String setDianzanUrl = serverUrl + "/dianzanpost";
     public static final String removePostUrl = serverUrl + "/removepost";
     public static final String removeReplyUrl = serverUrl + "/removereply";
+    public static final String addFollowUrl = serverUrl + "/addfollow";
+    public static final String removeFollowUrl = serverUrl + "/removefollow";
+    public static final String followListUrl = serverUrl + "/followlist";
+    public static final String addBanUrl = serverUrl + "/addban";
+    public static final String removeBanUrl = serverUrl + "/removeban";
+    public static final String banListUrl = serverUrl + "/banlist";
+    public static final String getMessageUrl = serverUrl + "/getmessage";
+    public static final String countUnreadUrl = serverUrl + "/countunread";
+    public static final String searchPostUrl = serverUrl + "/search";
+
+
 
     /* Method to build http Call */
     public static final OkHttpClient client = new OkHttpClient.Builder()

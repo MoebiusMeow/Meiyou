@@ -10,20 +10,14 @@
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!-- 访问WiFi状态，需要WiFi信息用于网络定位 -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <!-- 修改WiFi状态，发起WiFi扫描, 需要WiFi信息用于网络定位 -->
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-    <!-- 访问网络的变化, 需要某些信息用于网络定位 -->
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
-    <!-- 蓝牙扫描权限 -->
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-    <!-- 前台service权限 -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <!-- 后台定位权限 -->
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 访问WiFi状态，需要WiFi信息用于网络定位 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 修改WiFi状态，发起WiFi扫描, 需要WiFi信息用于网络定位 -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" /> <!-- 访问网络的变化, 需要某些信息用于网络定位 -->
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" /> <!-- 蓝牙扫描权限 -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" /> <!-- 前台service权限 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- 后台定位权限 -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <application
         android:name=".utils.GlobalData"
@@ -35,6 +29,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Meiyou"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".activity.MessageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.SearchPostActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.FollowActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.UserPageActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.LocationActivity"
             android:exported="false" />
@@ -61,11 +67,11 @@
         <activity
             android:name=".activity.LoginActivity"
             android:exported="true">
-            <intent-filter>`
-                    <action android:name="android.intent.action.MAIN" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-                    <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>`
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <provider
@@ -78,7 +84,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <meta-data android:name="TencentMapSDK" android:value="DEDBZ-MWH3R-KDFW6-WPIOS-EW3I6-YKFPE" />
+        <meta-data
+            android:name="TencentMapSDK"
+            android:value="DEDBZ-MWH3R-KDFW6-WPIOS-EW3I6-YKFPE" />
     </application>
 
 </manifest>

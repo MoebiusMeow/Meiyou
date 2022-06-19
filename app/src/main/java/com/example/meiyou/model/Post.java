@@ -2,16 +2,13 @@ package com.example.meiyou.model;
 
 import static com.example.meiyou.utils.GlobalData.FILE_TYPE_NONE;
 
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
 
-import com.example.meiyou.R;
-import com.example.meiyou.utils.GlobalData;
+import com.example.meiyou.activity.SearchPostActivity;
 import com.example.meiyou.utils.NetworkBasic;
 import com.example.meiyou.utils.NetworkConstant;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,8 +36,10 @@ public class Post extends NetworkBasic implements Serializable {
     public int n_reply = 0;
     public int profile_id = -1;
     public Uri userProfileUri = null;
+    public boolean followed = false;
     public static final int TYPE_POST = 0, TYPE_REPLY = 1, TYPE_HEAD_POST = 2;
     public int type = TYPE_POST;
+    public SearchPostActivity.SearchParam searchParam = null;
 
     private static final long serialVersionUID = 19260817L;
 
@@ -69,6 +68,14 @@ public class Post extends NetworkBasic implements Serializable {
         this.username = postObj.getString("username");
         this.uid = postObj.getInt("uid");
         this.datetime = postObj.getString("datetime");
+        this.followed = postObj.getBoolean("followed");
+        try{
+            this.pos = postObj.getString("pos");
+            if(this.pos.equals("null")) this.pos = null;
+        }
+        catch (Exception e){
+            this.pos = null;
+        }
 
         String post_id_str = postObj.getString("resids");
         if (post_id_str != null && !post_id_str.equals("null")) {

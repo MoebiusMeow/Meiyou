@@ -1,26 +1,25 @@
 package com.example.meiyou.component;
 
 import static com.example.meiyou.model.Post.TYPE_HEAD_POST;
-import static com.example.meiyou.model.Post.TYPE_POST;
 import static com.example.meiyou.model.Post.TYPE_REPLY;
+import static com.example.meiyou.utils.GlobalData.FILE_TYPE_AUD;
 import static com.example.meiyou.utils.GlobalData.FILE_TYPE_IMG;
 import static com.example.meiyou.utils.GlobalData.FILE_TYPE_NONE;
 import static com.example.meiyou.utils.GlobalData.FILE_TYPE_VID;
+import static com.example.meiyou.utils.GlobalData.getContext;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.gridlayout.widget.GridLayout;
-import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.meiyou.R;
@@ -56,6 +55,9 @@ public class PostViewAdapter extends
     public interface ClickedDeleteAction{
         void Onclick(PostInfo postInfo);
     }
+    public interface ClickedUserProfile{
+        void Onclick(int uid);
+    }
 
     private LoadMoreAction loadMoreAction = () -> { };
     private ClickedPostcardAction clickedPostcardAction = postInfo -> {
@@ -66,6 +68,9 @@ public class PostViewAdapter extends
         Log.d("PostInfo", ": uid="+postInfo.post.uid+" global uid="
                 + GlobalData.getUser().uid);
     };
+    private ClickedUserProfile clickedUserProfile = uid -> {
+        Log.d("UserClick", ": uid="+uid);
+    };
 
     public void setOnLoadMoreAction(LoadMoreAction action){
         loadMoreAction = action;
@@ -74,6 +79,8 @@ public class PostViewAdapter extends
     public void setOnClickedPost(ClickedPostcardAction action){ clickedPostcardAction = action; }
 
     public void setOnClickedDelete(ClickedDeleteAction action){ clickedDeleteAction = action; }
+
+    public void setOnClickedProfile(ClickedUserProfile action){ clickedUserProfile = action; }
 
     public PostViewAdapter(Context context, LifecycleOwner lifecycle) {
         mInflater = LayoutInflater.from(context);
@@ -188,7 +195,9 @@ public class PostViewAdapter extends
                 }
             }
             if(postInfo.style == STYLE_NOT_PUBLISHED) {
-                postCardBinding.FootArea.setVisibility(View.GONE);
+                //postCardBinding.FootArea.setVisibility(View.GONE);
+                postCardBinding.replyDianzanLayout.setVisibility(View.GONE);
+                postCardBinding.replyNumberLayout.setVisibility(View.GONE);
                 postCardBinding.postUserProfile.setVisibility(View.GONE);
                 postCardBinding.textPostUsername.setVisibility(View.GONE);
                 postCardBinding.textPostID.setVisibility(View.GONE);
@@ -198,7 +207,9 @@ public class PostViewAdapter extends
             }
             if(postInfo.post.type == TYPE_REPLY){
                 postCardBinding.postCardTitle.setVisibility(View.GONE);
-                postCardBinding.FootArea.setVisibility(View.GONE);
+                //postCardBinding.FootArea.setVisibility(View.GONE);
+                postCardBinding.replyDianzanLayout.setVisibility(View.GONE);
+                postCardBinding.replyNumberLayout.setVisibility(View.GONE);
             }
             if(postInfo.post.type == TYPE_HEAD_POST){
                 postCardBinding.postCardTitle.setTextSize(24);
@@ -227,6 +238,19 @@ public class PostViewAdapter extends
             else{
                 postCardBinding.layoutToDelete.setVisibility(View.INVISIBLE);
             }
+            if(postInfo.post.pos != null){
+                postCardBinding.cardPos.setVisibility(View.VISIBLE);
+                postCardBinding.textViewPos4.setText(postInfo.post.pos);
+            }
+            else{
+                postCardBinding.cardPos.setVisibility(View.GONE);
+            }
+            postCardBinding.postUserProfile.setOnClickListener(view -> {
+                clickedUserProfile.Onclick(postInfo.post.uid);
+            });
+            postCardBinding.textFollowed2.setVisibility(
+                    postInfo.post.followed? View.VISIBLE:View.INVISIBLE
+            );
         }
 
         public void createAttachmentView(){
@@ -243,7 +267,16 @@ public class PostViewAdapter extends
                         attatchedViewList.clear();
                         for (int i = 0; i < n; i++) {
                             DownloadView downloadView = new DownloadView(context);
-                            downloadView.setImageResource(R.drawable.defaultimage);
+                            downloadView.setImageResource(
+                                    type == FILE_TYPE_IMG ? R.drawable.defaultimage :
+                                    type == FILE_TYPE_VID ? R.drawable.video :
+                                    type == FILE_TYPE_AUD ? R.drawable.audio :
+                                    R.drawable.ic_dashboard_black_24dp);
+                            if (type == FILE_TYPE_AUD) {
+                                downloadView.setRatio(0.2f);
+                                downloadView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                            }
+
                             attatchedViewList.add(downloadView);
                             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
                             params.width = 0;
@@ -275,6 +308,11 @@ public class PostViewAdapter extends
                             view.setImageUri(uri);
                         else if (postInfo.post.res_type == FILE_TYPE_VID)
                             view.setVideoUri(uri);
+                        else if (postInfo.post.res_type == FILE_TYPE_AUD) {
+                            view.setImageResource(R.drawable.music);
+                            view.setAudioUri(uri);
+                            //view.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                        }
                     }
                 }
             }
@@ -300,8 +338,11 @@ public class PostViewAdapter extends
         public void onClick(View view) {
             if(mType == TYPE_TAIL){
                 loadMoreAction.Onclick();
-            }
-            else{
+            } else if (mType != TYPE_EMPTY_TAIL) {
+                for (int i = 0; i < attatchedViewList.size(); i++) {
+                    DownloadView downloadView = attatchedViewList.get(i);
+                    downloadView.doPause();
+                }
                 clickedPostcardAction.Onclick(this.postInfo);
             }
         }
@@ -314,12 +355,17 @@ public class PostViewAdapter extends
         notifyDataSetChanged();
     }
 
-    public void addPost(PostInfo newPost){
-        Log.d("TAG", "addPost: id="+newPost.getPost().pid);
-        PostInfo mLastHolder = postInfoList.getLast();
-        postInfoList.removeLast();
-        postInfoList.addLast(newPost);
-        postInfoList.addLast(mLastHolder);
+    public void addPost(int index, PostInfo newPost){
+        if(index < postInfoList.size()-1){
+            postInfoList.set(index, newPost);
+        }
+        else {
+            Log.d("TAG", "addPost: id=" + newPost.getPost().pid);
+            PostInfo mLastHolder = postInfoList.getLast();
+            postInfoList.removeLast();
+            postInfoList.addLast(newPost);
+            postInfoList.addLast(mLastHolder);
+        }
         notifyDataSetChanged();
     }
 

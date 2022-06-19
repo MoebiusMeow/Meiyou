@@ -1,13 +1,5 @@
 package com.example.meiyou.activity;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
-import androidx.lifecycle.Observer;
-
 import android.Manifest;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -18,17 +10,20 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.Observer;
+
 import com.example.meiyou.R;
 import com.example.meiyou.control.FileUploader;
 import com.example.meiyou.databinding.ActivityEditUserInfoBinding;
-import com.example.meiyou.databinding.ActivityMainBinding;
 import com.example.meiyou.model.User;
 import com.example.meiyou.utils.GlobalData;
 import com.example.meiyou.utils.NetworkBasic;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 
 public class EditUserInfoActivity extends AppCompatActivity {
 
@@ -97,6 +92,9 @@ public class EditUserInfoActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
+                    }
+                    else if(result.getResultCode() == RESULT_CANCELED){
+                        setMask(false);
                     }
                 });
 

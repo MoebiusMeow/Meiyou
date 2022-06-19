@@ -20,12 +20,14 @@ public class User extends NetworkBasic {
     public int uid = 0;
     public MutableLiveData<Uri> userprofile = new MutableLiveData<>();
     public int profile_id = 0;
+    public boolean followed = false;
 
     public void requestInfo(){
         status.postValue(Status.idle);
+        Log.d("USERINFO", "requestInfo: uid="+uid);
         HttpUrl.Builder urlBuilder = HttpUrl.parse(NetworkConstant.userInfoUrl).newBuilder()
                 .addQueryParameter("uid", String.valueOf(uid));
-        NetworkConstant.get(NetworkConstant.userInfoUrl, true, getCommonNetworkCallback(response -> {
+        NetworkConstant.get(urlBuilder.build().toString(), true, getCommonNetworkCallback(response -> {
             if(response.code()!=200){
                 status.postValue(Status.wrong);
                 return;
@@ -34,7 +36,13 @@ public class User extends NetworkBasic {
             username = jsonObject.getString("username");
             uid = jsonObject.getInt("uid");
             signature = jsonObject.getString("sig");
-            profile_id = jsonObject.getInt("profileid");
+            followed = jsonObject.getBoolean("followed");
+            try {
+                profile_id = jsonObject.getInt("profileid");
+            }
+            catch (Exception e){
+                profile_id = 0;
+            }
             email = jsonObject.getString("mail");
             Log.d("TAG", "requestInfo: success");
             status.postValue(Status.success);
@@ -48,4 +56,6 @@ public class User extends NetworkBasic {
             });
         }
     }
+
+
 }

@@ -37,6 +37,7 @@ public class SinglePostActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         pid = Integer.valueOf(intent.getStringExtra(EXTRA_PID));
+        Log.d("POSTPID", "onCreate: pid="+pid);
         if(pid <=0){
             setResult(RESULT_CANCELED);
             finish();
@@ -50,8 +51,7 @@ public class SinglePostActivity extends AppCompatActivity {
         postListFragment.setPostID(pid);
         postListFragment.setOnRenewCallback(count -> {
             Log.d("Change", "onCreate: "+count);
-            if(count <=1 ){
-
+            if(count <=0 ){
                 finish();
             }
         });
@@ -65,6 +65,7 @@ public class SinglePostActivity extends AppCompatActivity {
                 });
 
         binding.buttonReturnSinglePost.setOnClickListener(view->{
+            binding.fragmentUser.removeAllViews();
             setResult(RESULT_CANCELED);
             finish();
         });
@@ -76,6 +77,23 @@ public class SinglePostActivity extends AppCompatActivity {
             activityNewReplyLauncher.launch(intent1);
         });
 
+        binding.buttonshare.setOnClickListener(view -> {
+            Intent share = new Intent(android.content.Intent.ACTION_SEND);
+            share.setType("text/plain");
+            String title = "标题";
+            String extraText="[草莓波球论坛]"+postListFragment.getAbstract();
+            share.putExtra(Intent.EXTRA_TEXT, extraText);
+            if (title != null) {
+                share.putExtra(Intent.EXTRA_SUBJECT, title);
+            }
+            startActivity(Intent.createChooser(share, "分享一下"));
+        });
 
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

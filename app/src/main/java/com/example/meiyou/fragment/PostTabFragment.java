@@ -67,8 +67,8 @@ public class PostTabFragment extends Fragment {
                     }
                 });
 
-        GlobalData.sig_fresh.observe( getViewLifecycleOwner(), integer -> {
-            if(integer == GlobalData.SIG_FRESH_DO){
+        GlobalData.sig_to_home.observe( getViewLifecycleOwner(), integer -> {
+            if(integer == GlobalData.SIG_TO_HOME_DO){
                 switchToNewest();
             }
         });

@@ -8,6 +8,7 @@ import com.example.meiyou.utils.NetworkBasic;
 import com.example.meiyou.utils.NetworkConstant;
 
 import java.io.File;
+import java.util.Objects;
 
 import okhttp3.HttpUrl;
 import okio.BufferedSink;
@@ -30,7 +31,8 @@ public class FileDownloader extends NetworkBasic {
                             GlobalData.getContext().getCacheDir());
                     BufferedSink sink = Okio.buffer(Okio.sink(outputFile));
 
-                    sink.writeAll(response1.body().source());
+                    Log.d("meownn", response1.toString());
+                    sink.writeAll(Objects.requireNonNull(response1.body()).source());
                     sink.close();
                     result = Uri.fromFile(outputFile);
                     Log.d("Download", "pull_post: " + result.toString());

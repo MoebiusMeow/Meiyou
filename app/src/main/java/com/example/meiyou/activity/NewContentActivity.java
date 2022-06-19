@@ -3,6 +3,7 @@ package com.example.meiyou.activity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -64,6 +65,7 @@ public class NewContentActivity extends AppCompatActivity {
     Uri imageUri = null;
 
     private int nSelected = 0;
+    private String pos = null;
 
 
     private int pid = 0;
@@ -90,11 +92,20 @@ public class NewContentActivity extends AppCompatActivity {
             binding.textNewContentTitle.setText("回复#"+pid);
             binding.editTextTitle.setText("");
             binding.editTextTitle.setVisibility(View.GONE);
-            binding.editTextContent.setText("回复正文...");
+            binding.editTextContent.setText("");
+            binding.editTextContent.setHint("回复正文...");
         }
         else{
             binding.textNewContentTitle.setText("新帖子");
         }
+
+        binding.textViewPos.setVisibility(View.GONE);
+        binding.imageViewDeletePos.setVisibility(View.GONE);
+        binding.imageViewDeletePos.setOnClickListener(view -> {
+            pos = null;
+            binding.textViewPos.setVisibility(View.GONE);
+            binding.imageViewDeletePos.setVisibility(View.GONE);
+        });
 
         // Get Intent message
         Post post = (Post) getIntent().getSerializableExtra(POST_SAVED);
@@ -177,11 +188,17 @@ public class NewContentActivity extends AppCompatActivity {
                         if (data != null){
                             try {
                                 Log.d("mmu", data.getStringExtra("address"));
-                                binding.editTextContent.append(
+                                /*binding.editTextContent.append(
                                         "[" + data.getStringExtra("address") + " " +
                                         "(" + data.getStringExtra("latitude") +
                                         ", " + data.getStringExtra("longitude") +
                                         ")]");
+                                 */
+                                pos = data.getStringExtra("address");
+                                binding.textViewPos.setText(pos);
+                                binding.textViewPos.setVisibility(View.VISIBLE);
+                                binding.imageViewDeletePos.setVisibility(View.VISIBLE);
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -238,8 +255,8 @@ public class NewContentActivity extends AppCompatActivity {
 
         binding.buttonAddVideo.setOnClickListener(view -> {
 
-            if(nSelected >=1){
-                Toast.makeText(this, "最多上传1张图片哦~", Toast.LENGTH_SHORT).show();
+            if(nSelected >= 1){
+                Toast.makeText(this, "最多上传1个视频哦~", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -281,9 +298,8 @@ public class NewContentActivity extends AppCompatActivity {
             builder.setItems(choices, (dialog, which) -> {
                 // Select local
                 if(which == 0){
-                    Intent intent = new Intent();
-                    intent.setType("audio/*");
-                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
+                    //intent.setType("audio/*");
                     activityAudioSelectLauncher.launch(intent);
                 }
                 // Shoot video
@@ -395,7 +411,14 @@ public class NewContentActivity extends AppCompatActivity {
         // put a uploading view
         UploadView uploadView = new UploadView(this, this);
         uploadView.setName(fileNameDisplay);
-        uploadView.setImageUri(uri);
+        if (fileType.equals("/image"))
+            uploadView.setImageUri(uri);
+        else if (fileType.equals("/video")) {
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(getBaseContext(), uri);
+            uploadView.setBitmap(retriever.getFrameAtIndex(0));
+        } else
+            uploadView.setResource(R.drawable.music);
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;
         params.rowSpec = GridLayout.spec((int)(nSelected/3),1,1f);
@@ -407,7 +430,7 @@ public class NewContentActivity extends AppCompatActivity {
 
         // Bind upload finish callback
         fileUploader.status.observe(this, status -> {
-            Log.d("meow", status.toString());
+            //Log.d("meow", status.toString());
             if (status == NetworkBasic.Status.success) {
                 uploadView.setProgressBar(2.0f);
                 resIDList.add(fileUploader.result_res_id);
@@ -418,7 +441,7 @@ public class NewContentActivity extends AppCompatActivity {
         });
 
         // Send
-        Log.d("TAG", "doUpload: "+ uri.getPath());
+        //Log.d("TAG", "doUpload: "+ uri.getPath());
         Call call = fileUploader.put(uri, fileType, uploadView::setProgressBar);
 
         //On Cancel uploading or uploaded file
@@ -454,11 +477,11 @@ public class NewContentActivity extends AppCompatActivity {
         post.res_type = attachedFiletype;
         post.uid = GlobalData.getUser().uid;
         post.pid = this.pid;
+        post.pos = this.pos;
         Log.d("TAG", "buildPost: res_type="+post.res_type);
         if(attachedFiletype != GlobalData.FILE_TYPE_NONE && attachedFiletype != GlobalData.FILE_TYPE_NONE){
             post.res_ids = (ArrayList<Integer>) resIDList.clone();
         }
-        post.res_uri_list = (ArrayList<Uri>) fileUriList.clone();
         return post;
     }
 }

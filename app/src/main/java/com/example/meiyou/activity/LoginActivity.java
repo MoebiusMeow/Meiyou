@@ -50,8 +50,8 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = binding.login;
         loadingProgressBar = binding.loading;
 
-        usernameEditText.setText("dcy11011");
-        passwordEditText.setText("111111"); // NOTE: change these into:
+        //usernameEditText.setText("dcy11011");
+        //passwordEditText.setText("111111"); // NOTE: change these into:
         // passwordEditText.setText("");
         // String username = getIntent().getStringExtra(EXTRA_USERNAME);
         // if(username != null) usernameEditText.setText(username);
@@ -86,7 +86,7 @@ public class LoginActivity extends AppCompatActivity {
         GlobalData.getUser().status.observe(this, new Observer<MainUser.Status>() {
             @Override
             public void onChanged(MainUser.Status status) {
-                if(status == NetworkBasic.Status.success){
+                if(status == NetworkBasic.Status.success&&GlobalData.getUser().errorCode== 77889){
                     loadingProgressBar.setVisibility(View.INVISIBLE);
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     activityResultLauncher.launch(intent);

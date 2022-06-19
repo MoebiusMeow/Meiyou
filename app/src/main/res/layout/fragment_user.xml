@@ -7,6 +7,50 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/messageAlertLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@drawable/circle_border"
+        android:backgroundTint="#FF9800"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout5">
+
+        <TextView
+            android:id="@+id/textViewMessageCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="8条新消息"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/imageView6"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="40dp"
+            android:layout_height="0dp"
+            android:scaleType="centerInside"
+            android:tint="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewMessageCount"
+            app:layout_constraintEnd_toStartOf="@+id/textViewMessageCount"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textViewMessageCount"
+            app:srcCompat="@drawable/comment" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout5"
         android:layout_width="match_parent"
         android:layout_height="48dp"
@@ -16,7 +60,47 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
+            android:id="@+id/buttonReturnUserPage"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="8dp"
+            android:background="#00FFFFFF"
+            android:scaleType="fitXY"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/arrow_left"
+            app:tint="@color/white" />
+
+        <ImageButton
             android:id="@+id/buttonEditProfile"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="8dp"
+            android:background="#00FFFFFF"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/buttonMyMessage"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/editinfo"
+            app:tint="@color/white" />
+
+        <ImageButton
+            android:id="@+id/buttonSetBan"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="8dp"
+            android:background="#00FFFFFF"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/buttonEditProfile"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/invisible"
+            app:tint="@color/white" />
+
+        <ImageButton
+            android:id="@+id/buttonMyMessage"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginEnd="16dp"
@@ -25,8 +109,22 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/editinfo"
+            app:srcCompat="@drawable/ic_notifications_black_24dp"
             app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/textBanned"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="[已屏蔽]"
+            android:textColor="@color/red_0"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/buttonSetBan"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -36,18 +134,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout5">
+        app:layout_constraintTop_toBottomOf="@+id/messageAlertLayout">
 
         <TextView
             android:id="@+id/textUserpageName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginBottom="16dp"
             android:text="User name"
             android:textSize="20sp"
-            app:layout_constraintBottom_toTopOf="@+id/textUserpageEmail"
-            app:layout_constraintStart_toEndOf="@+id/imageUserUserProfile" />
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/imageUserUserProfile"
+            app:layout_constraintTop_toTopOf="@+id/imageUserUserProfile" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout3"
@@ -56,7 +154,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
-            android:background="@color/green_0"
+            android:background="@color/green_200"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textUserIntro">
@@ -77,6 +175,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
+            android:backgroundTint="@color/pink_500"
             android:minWidth="0dp"
             android:minHeight="0dp"
             android:text="关注"
@@ -107,12 +206,14 @@
 
         <TextView
             android:id="@+id/textUserpageEmail"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="TextView"
-            app:layout_constraintBottom_toBottomOf="@+id/imageUserUserProfile"
-            app:layout_constraintStart_toEndOf="@+id/imageUserUserProfile" />
+            android:text="TextView@foxmial.com"
+            android:textColor="@color/gray_200"
+            app:layout_constraintEnd_toEndOf="@+id/buttonFollow"
+            app:layout_constraintStart_toEndOf="@+id/imageUserUserProfile"
+            app:layout_constraintTop_toBottomOf="@+id/textUserpageName" />
 
         <ProgressBar
             android:id="@+id/progressBar4"
@@ -128,9 +229,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
 
-        <fragment
+        <FrameLayout
             android:id="@+id/fragmentUser"
-            android:name="com.example.meiyou.fragment.PostListFragment"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="8dp"
@@ -140,6 +240,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
+
+        <TextView
+            android:id="@+id/textFollowed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="[已关注]"
+            android:textColor="@color/pink_500"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/textUserpageName"
+            app:layout_constraintStart_toEndOf="@+id/textUserpageName" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
