@@ -5,10 +5,13 @@ import static android.app.Activity.RESULT_OK;
 
 import static com.example.meiyou.model.PostList.MODE_USER_FIX;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,12 +35,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.meiyou.R;
 import com.example.meiyou.activity.EditUserInfoActivity;
 import com.example.meiyou.activity.FollowActivity;
+import com.example.meiyou.activity.MessageActivity;
 import com.example.meiyou.activity.SinglePostActivity;
 import com.example.meiyou.component.PostViewAdapter;
 import com.example.meiyou.databinding.FragmentUserBinding;
 import com.example.meiyou.model.MainUser;
 import com.example.meiyou.model.Post;
 import com.example.meiyou.model.PostList;
+import com.example.meiyou.model.UnreadMessageSender;
 import com.example.meiyou.model.User;
 import com.example.meiyou.model.UserBanSender;
 import com.example.meiyou.model.UserFollowSender;
@@ -51,6 +56,9 @@ public class UserFragment extends Fragment {
 
     private int uid = 0;
     private User user = null;
+    private static MessagePolling polling;
+    private Handler pollingHandler;
+    private UnreadMessageSender pollingSender;
 
     private ActivityResultLauncher<Intent> followListLauncher, messagesLauncher;
 
@@ -63,6 +71,16 @@ public class UserFragment extends Fragment {
     }
 
     private ActivityResultLauncher<Intent> activityEditInfoLauncher;
+
+    class MessagePolling implements Runnable {
+        @Override
+        public void run() {
+            pollingSender.request();
+            pollingHandler.postDelayed(this, 5000);
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -84,7 +102,8 @@ public class UserFragment extends Fragment {
             Log.d("USERINFO", "onCreateView: uid="+uid);
         }
         if(uid == GlobalData.getUser().uid){
-            binding.buttonFollow.setVisibility(View.INVISIBLE);
+            //binding.buttonFollow.setVisibility(View.INVISIBLE);
+            binding.buttonFollow.setText("我的关注");
             binding.buttonSetBan.setVisibility(View.INVISIBLE);
         }
         binding.textBanned.setVisibility(View.INVISIBLE);
@@ -134,29 +153,44 @@ public class UserFragment extends Fragment {
             activityEditInfoLauncher.launch(intent);
         });
 
-        binding.buttonFollow.setOnClickListener(view1 -> {
-            UserFollowSender followSender = new UserFollowSender(user.uid);
-            followSender.status.observe(getViewLifecycleOwner(), status -> {
-                if(status == NetworkBasic.Status.fail || status == NetworkBasic.Status.wrong){
-                    Toast.makeText(getActivity(), "关注失败，请稍后重试", Toast.LENGTH_SHORT).show();
-                }
-                if(status == NetworkBasic.Status.success){
-                    getActivity().setResult(RESULT_OK);
-                    Toast.makeText(getActivity(), user.followed? "取关成功":"关注成功", Toast.LENGTH_SHORT).show();
-                    user.followed = !user.followed;
-                    setUiFollowed(user.followed);
-                }
-            });
-            followSender.setFollow(!user.followed);
-        });
-
         followListLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
 
         });
 
-        binding.buttonFollow2.setOnClickListener(view1 -> {
-            Intent intent = new Intent(getActivity(), FollowActivity.class);
+        messagesLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+
+        });
+
+        binding.messageAlertLayout.setOnClickListener(view1 -> {
+            Intent intent = new Intent(getActivity(), MessageActivity.class);
             followListLauncher.launch(intent);
+            binding.messageAlertLayout.setVisibility(View.GONE);
+        });
+
+        binding.buttonMyMessage.setOnClickListener(view1 -> {
+            Intent intent = new Intent(getActivity(), MessageActivity.class);
+            followListLauncher.launch(intent);
+        });
+
+        binding.buttonFollow.setOnClickListener(view1 -> {
+            if (uid == GlobalData.getUser().uid) {
+                Intent intent = new Intent(getActivity(), FollowActivity.class);
+                followListLauncher.launch(intent);
+            } else {
+                UserFollowSender followSender = new UserFollowSender(user.uid);
+                followSender.status.observe(getViewLifecycleOwner(), status -> {
+                    if (status == NetworkBasic.Status.fail || status == NetworkBasic.Status.wrong) {
+                        Toast.makeText(getActivity(), "关注失败，请稍后重试", Toast.LENGTH_SHORT).show();
+                    }
+                    if (status == NetworkBasic.Status.success) {
+                        getActivity().setResult(RESULT_OK);
+                        Toast.makeText(getActivity(), user.followed ? "取关成功" : "关注成功", Toast.LENGTH_SHORT).show();
+                        user.followed = followSender.flag;
+                        setUiFollowed(user.followed);
+                    }
+                });
+                followSender.setFollow(!user.followed);
+            }
         });
 
         binding.buttonSetBan.setOnClickListener(view1 -> {
@@ -185,6 +219,23 @@ public class UserFragment extends Fragment {
             alert.show();
         });
 
+        binding.messageAlertLayout.setVisibility(View.GONE);
+
+        pollingSender = new UnreadMessageSender(uid);
+        polling = new MessagePolling();
+        pollingSender.status.observe(getViewLifecycleOwner(), status -> {
+            if (status == NetworkBasic.Status.success) {
+                if (pollingSender.result <= 0) {
+                    binding.messageAlertLayout.setVisibility(View.GONE);
+                } else {
+                    binding.messageAlertLayout.setVisibility(View.VISIBLE);
+                    binding.textViewMessageCount.setText(pollingSender.result + "条新消息");
+                }
+            }
+        });
+
+        pollingHandler = new Handler(Looper.getMainLooper());
+        pollingHandler.postDelayed(polling, 100);
 
         //refreshUserData();
         user.requestInfo();
@@ -198,6 +249,16 @@ public class UserFragment extends Fragment {
     }
 
     public void setUiFollowed(boolean flag){
+        if (uid == GlobalData.getUser().uid) {
+            binding.buttonFollow.setText("我的关注");
+            binding.buttonFollow.setBackgroundTintList(
+                    GlobalData.createColorStateList(
+                            getActivity().getColor(R.color.pink_500)
+                            , getActivity().getColor(R.color.pink_500)
+                    ));
+            binding.textFollowed.setVisibility(View.INVISIBLE);
+            return;
+        }
         if(!flag){
             binding.buttonFollow.setText("关注");
             binding.buttonFollow.setBackgroundTintList(
@@ -216,5 +277,11 @@ public class UserFragment extends Fragment {
                     ));
             binding.textFollowed.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        pollingHandler.removeCallbacks(polling);
+        super.onDestroy();
     }
 }
