@@ -92,7 +92,8 @@ public class NewContentActivity extends AppCompatActivity {
             binding.textNewContentTitle.setText("回复#"+pid);
             binding.editTextTitle.setText("");
             binding.editTextTitle.setVisibility(View.GONE);
-            binding.editTextContent.setText("回复正文...");
+            binding.editTextContent.setText("");
+            binding.editTextContent.setHint("回复正文...");
         }
         else{
             binding.textNewContentTitle.setText("新帖子");
