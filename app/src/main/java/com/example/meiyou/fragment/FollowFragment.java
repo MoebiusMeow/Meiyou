@@ -1,8 +1,11 @@
 package com.example.meiyou.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
@@ -20,6 +23,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.meiyou.R;
+import com.example.meiyou.activity.SinglePostActivity;
+import com.example.meiyou.activity.UserPageActivity;
 import com.example.meiyou.databinding.FragmentFollowBinding;
 import com.example.meiyou.model.User;
 import com.example.meiyou.model.UserBanSender;
@@ -48,6 +53,7 @@ public class FollowFragment extends Fragment {
     private String senderClass;
 
     private FragmentFollowBinding binding;
+    ActivityResultLauncher<Intent> activityLauncher;
 
     public int uid;
     public String listURL;
@@ -136,6 +142,11 @@ public class FollowFragment extends Fragment {
                         message.active ^ senderClass.equals("follow") ? R.color.pink_500 : R.color.gray_100));
             };
             updateButton.run();
+            itemView.setOnClickListener(view -> {
+                Intent intent = new Intent(getActivity(), UserPageActivity.class);
+                intent.putExtra(UserPageActivity.USER_UID, message.uid);
+                activityLauncher.launch(intent);
+            });
             btn.setOnClickListener(view -> {
                 NetworkBasic sender;
                 Callable<Boolean> getter;
@@ -198,6 +209,9 @@ public class FollowFragment extends Fragment {
                 }
             }
         });
+
+        activityLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> { });
 
         fetcher = new ListFetcher();
         return binding.getRoot();

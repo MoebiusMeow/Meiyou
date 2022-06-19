@@ -2,17 +2,13 @@ package com.example.meiyou.model;
 
 import static com.example.meiyou.utils.GlobalData.FILE_TYPE_NONE;
 
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
 
-import com.example.meiyou.R;
 import com.example.meiyou.activity.SearchPostActivity;
-import com.example.meiyou.utils.GlobalData;
 import com.example.meiyou.utils.NetworkBasic;
 import com.example.meiyou.utils.NetworkConstant;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 

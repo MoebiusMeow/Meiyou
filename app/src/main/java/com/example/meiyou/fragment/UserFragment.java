@@ -2,7 +2,6 @@ package com.example.meiyou.fragment;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
-
 import static com.example.meiyou.model.PostList.MODE_USER_FIX;
 
 import android.annotation.SuppressLint;
@@ -19,35 +18,22 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentContainer;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.meiyou.R;
 import com.example.meiyou.activity.EditUserInfoActivity;
 import com.example.meiyou.activity.FollowActivity;
 import com.example.meiyou.activity.MessageActivity;
-import com.example.meiyou.activity.SinglePostActivity;
-import com.example.meiyou.component.PostViewAdapter;
 import com.example.meiyou.databinding.FragmentUserBinding;
-import com.example.meiyou.model.MainUser;
-import com.example.meiyou.model.Post;
-import com.example.meiyou.model.PostList;
 import com.example.meiyou.model.UnreadMessageSender;
 import com.example.meiyou.model.User;
 import com.example.meiyou.model.UserBanSender;
 import com.example.meiyou.model.UserFollowSender;
 import com.example.meiyou.utils.GlobalData;
-import com.example.meiyou.utils.GlobalResFileManager;
 import com.example.meiyou.utils.NetworkBasic;
 
 public class UserFragment extends Fragment {
@@ -105,7 +91,9 @@ public class UserFragment extends Fragment {
         if(uid == GlobalData.getUser().uid){
             //binding.buttonFollow.setVisibility(View.INVISIBLE);
             binding.buttonFollow.setText("我的关注");
-            binding.buttonSetBan.setVisibility(View.INVISIBLE);
+            binding.buttonSetBan.setVisibility(View.GONE);
+        } else {
+            binding.buttonMyMessage.setVisibility(View.GONE);
         }
         binding.textBanned.setVisibility(View.INVISIBLE);
 

@@ -481,7 +481,6 @@ public class NewContentActivity extends AppCompatActivity {
         if(attachedFiletype != GlobalData.FILE_TYPE_NONE && attachedFiletype != GlobalData.FILE_TYPE_NONE){
             post.res_ids = (ArrayList<Integer>) resIDList.clone();
         }
-        post.res_uri_list = (ArrayList<Uri>) fileUriList.clone();
         return post;
     }
 }

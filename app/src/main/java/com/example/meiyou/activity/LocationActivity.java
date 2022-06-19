@@ -15,7 +15,6 @@ import android.webkit.WebViewClient;
 
 import com.example.meiyou.databinding.ActivityLocationBinding;
 import com.example.meiyou.databinding.ActivityLoginBinding;
-import com.tencent.tencentmap.mapsdk.maps.MapView;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
