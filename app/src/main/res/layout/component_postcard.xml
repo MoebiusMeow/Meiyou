@@ -57,7 +57,7 @@
 
                     <ImageView
                         android:id="@+id/postUserProfile"
-                        android:layout_width="18dp"
+                        android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:layout_marginStart="4dp"
                         android:contentDescription="User Profile"

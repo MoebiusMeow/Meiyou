@@ -214,7 +214,7 @@ public class UserFragment extends Fragment {
         polling = new MessagePolling();
         pollingSender.status.observe(getViewLifecycleOwner(), status -> {
             if (status == NetworkBasic.Status.success) {
-                if (pollingSender.result <= 0) {
+                if (pollingSender.result <= 0 || uid != GlobalData.getUser().uid) {
                     binding.messageAlertLayout.setVisibility(View.GONE);
                 } else {
                     binding.messageAlertLayout.setVisibility(View.VISIBLE);

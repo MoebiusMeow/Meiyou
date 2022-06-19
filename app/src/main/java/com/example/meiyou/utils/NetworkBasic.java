@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.net.ProtocolException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -53,7 +54,7 @@ public class NetworkBasic {
                     Log.e("Network", "onResponse: <JSONError>", e);
                     status.postValue(Status.wrong);
                 }
-                catch(Exception e){
+                catch(ProtocolException e){
                     e.printStackTrace();
                     if(this.retry <=0){
                         Log.e("Network", "onResponse: ", e);
@@ -64,6 +65,9 @@ public class NetworkBasic {
                         this.retry -= 1;
                         call.clone().enqueue(this);
                     }
+                }
+                catch (Exception e) {
+                    status.postValue(Status.wrong);
                 }
             }
         };

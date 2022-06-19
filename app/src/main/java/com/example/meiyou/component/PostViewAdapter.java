@@ -207,7 +207,9 @@ public class PostViewAdapter extends
             }
             if(postInfo.post.type == TYPE_REPLY){
                 postCardBinding.postCardTitle.setVisibility(View.GONE);
-                postCardBinding.FootArea.setVisibility(View.GONE);
+                //postCardBinding.FootArea.setVisibility(View.GONE);
+                postCardBinding.replyDianzanLayout.setVisibility(View.GONE);
+                postCardBinding.replyNumberLayout.setVisibility(View.GONE);
             }
             if(postInfo.post.type == TYPE_HEAD_POST){
                 postCardBinding.postCardTitle.setTextSize(24);

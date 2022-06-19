@@ -84,17 +84,11 @@ public class DownloadView extends ConstraintLayout {
         progressBar.setVisibility(VISIBLE);
         videoView.setOnPreparedListener(mediaPlayer -> {
             hideMask();
+            videoView.seekTo(1000);
+            videoView.pause();
         });
-        /*videoView.setOnClickListener(view -> {
-            if (videoView.getDuration() == 0)
-                return;
-            if (videoView.isPlaying()) {
-                videoView.pause();
-            } else {
-                videoView.start();
-                Log.d("TAG", "start video");
-            }
-        });*/
+        videoView.setOnClickListener(view -> {
+        });
         videoView.setVideoURI(uri);
 
         controller = new MediaController(this.getContext());
